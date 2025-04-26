@@ -1,9 +1,9 @@
-name = "Research Group"
+name = "Li Lab"
 license = "MIT"
-licenselink = "https://github.com/wowchemy/starter-hugo-research-group/blob/main/LICENSE.md"
-description = "The **Research Group Template** empowers your research group to easily create a beautiful website with a stunning homepage, news, academic publications, events, team profiles, and a contact form."
+licenselink = "https://github.com/YuanyueLiLab/LabWebsite/blob/main/LICENSE.md"
+description = "The website for Yuanyue Li Lab, a research group at the Zhejiang University. The website is built with Hugo and uses the Wowchemy Academic theme."
 homepage = "https://github.com/wowchemy/starter-hugo-research-group"
-demosite = "https://research-group.netlify.app/"
+demosite = "https://lilab.cool"
 tags = ["academic",
         "university",
         "research",
@@ -37,5 +37,5 @@ features = ["page builder", "widgets", "themes", "search", "research publication
             "blog", "create courses", "talks", "events", "slides", "gallery", "contact form"]
 
 [author]
-  name = "George Cushen"
-  homepage = "https://georgecushen.com"
+  name = "Yuanyue Li"
+  homepage = "https://lilab.cool"

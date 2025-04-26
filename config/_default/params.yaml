@@ -18,10 +18,10 @@ marketing:
     site_type: Organization
     local_business_type: ''
     org_name: ''
-    description: 'A highly-customizable Hugo research group theme powered by Wowchemy website builder.'
-    twitter: 'GetResearchDev'
+    description: 'Li Lab'
+    twitter: 'LiYuanyue'
   analytics:
-    google_analytics: ''
+    google_analytics: 'G-V7RYYW6LE8'
     baidu_tongji: ''
     google_tag_manager: ''
     microsoft_clarity: ''
@@ -39,18 +39,18 @@ header:
     show_language: false
     show_day_night: true
     show_search: true
-    highlight_active_link: false
+    highlight_active_link: true
 
 # Site footer
 
-footer:
-  copyright:
-    notice: '© {year} Me. This work is licensed under {license}'
-    license:
-      enable: true
-      allow_derivatives: false
-      share_alike: true
-      allow_commercial: false
+# footer:
+#   copyright:
+#     notice: '© {year} Me. This work is licensed under {license}'
+#     license:
+#       enable: true
+#       allow_derivatives: false
+#       share_alike: true
+#       allow_commercial: false
 
 # Localization
 
@@ -65,14 +65,14 @@ features:
   syntax_highlighter:
     enable: false
     extra_languages:
-      - r
+      - python
       - latex
   math:
     enable: false
   privacy_pack:
     enable: false
   repository:
-    url: 'https://github.com/<username>/<repository>'
+    url: 'https://github.com/YuanyueLiLab/LabWebsite'
     content_dir: content
     branch: main
   avatar:

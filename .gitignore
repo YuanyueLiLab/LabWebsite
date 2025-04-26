@@ -1,1 +1,7 @@
 test/
+.gitignore
+public/
+resources/
+.hugo_build.lock
+go.sum
+assets/jsconfig.json
