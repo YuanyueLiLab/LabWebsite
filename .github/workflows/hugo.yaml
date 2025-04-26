@@ -1,5 +1,5 @@
 # Sample workflow for building and deploying a Hugo site to GitHub Pages
-name: Deploy Hugo site to Pages
+name: Deploy website to public
 
 on:
   # Runs on pushes targeting the default branch
@@ -71,9 +71,27 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
-
+  
       - name: Deploy static site to S3 bucket
         run: aws s3 sync ./public s3://lilab.cool --delete
+
+      - name: Create Amplify Deployment
+        id: deploy
+        run: |
+          DEPLOYMENT=$(aws amplify create-deployment --app-id d2jv907cygwoun --branch-name Public)
+          echo "$DEPLOYMENT"
+          UPLOAD_URL=$(echo "$DEPLOYMENT" | jq -r '.fileUploadUrls.index')
+          JOB_ID=$(echo "$DEPLOYMENT" | jq -r '.jobId')
+
+          # Zip the public/ folder
+          zip -r site.zip public/*
+
+          # Upload the zip file
+          curl -T site.zip "$UPLOAD_URL"
+
+          # Start the deployment
+          aws amplify start-deployment --app-id d2jv907cygwoun --branch-name Public --job-id "$JOB_ID"
+
 
   # Deployment job
   deploy:
