@@ -22,9 +22,9 @@ sections:
       #   country: United States
       #   country_code: US
       address:
-        street: 浙江省杭州市西湖区余杭塘路866号 浙江大学紫金港校区医学院教学楼C305
-        country: P.R. China
-        country_code: CN
+        region: 浙江省杭州市西湖区余杭塘路866号 浙江大学紫金港校区医学院教学楼C305
+        # country: P.R. China
+        # country_code: CN
       email: YuanyueLi@zju.edu.cn
       # directions: Enter Building 1 and take the stairs to Office 200 on Floor 2
       # office_hours:

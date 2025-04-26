@@ -49,13 +49,17 @@ social:
     link: https://twitter.com/LiYuanyue
     label: Follow me on Twitter
     display:
-      header: true
+      header: false
   - icon: google-scholar # Alternatively, use `google-scholar` icon from `ai` icon pack
     icon_pack: ai
     link: https://scholar.google.co.uk/citations?user=p0fQe3sAAAAJ
+    display:
+      header: true
   - icon: github
     icon_pack: fab
     link: https://github.com/YuanyueLi
+    display:
+      header: true
   - icon: orcid
     icon_pack: fab
     link: https://orcid.org/0000-0001-5971-0355
