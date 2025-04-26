@@ -80,7 +80,7 @@ jobs:
         run: |
           DEPLOYMENT=$(aws amplify create-deployment --app-id d2jv907cygwoun --branch-name Public)
           echo "$DEPLOYMENT"
-          UPLOAD_URL=$(echo "$DEPLOYMENT" | jq -r '.fileUploadUrls.index')
+          UPLOAD_URL=$(echo "$DEPLOYMENT" | jq -r '.zipUploadUrl')
           JOB_ID=$(echo "$DEPLOYMENT" | jq -r '.jobId')
 
           # Zip the public/ folder
@@ -91,16 +91,3 @@ jobs:
 
           # Start the deployment
           aws amplify start-deployment --app-id d2jv907cygwoun --branch-name Public --job-id "$JOB_ID"
-
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
