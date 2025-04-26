@@ -84,7 +84,8 @@ jobs:
           JOB_ID=$(echo "$DEPLOYMENT" | jq -r '.jobId')
 
           # Zip the public/ folder
-          zip -r site.zip public/*
+          cd public
+          zip -r site.zip *
 
           # Upload the zip file
           curl -T site.zip "$UPLOAD_URL"
