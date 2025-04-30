@@ -1,7 +1,7 @@
 ---
-title: Research
+title: Join us
 date: 2025-04-26
-type: landing
+type: widget_page
 
 sections:  
   - block: markdown

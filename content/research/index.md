@@ -1,7 +1,7 @@
 ---
 title: Research
 date: 2025-04-26
-type: landing
+type: widget_page
 
 sections:  
   - block: markdown.self
@@ -18,7 +18,7 @@ sections:
   - block: markdown.self
     content:
       title: 寻找生物医学中关键的新型代谢物
-      subtitle: '找生'
+      subtitle: ''
       text: |-
         <p align="center"><img src="project_2.png" width="600" height="240"/></p>
         多种证据表明，人类已知的代谢物只占人体内全部代谢物的一小部分。那么，体内那些未知代谢物到底是什么？它们在生命活动中扮演什么角色？又是否可能成为攻克各种疑难疾病的关键分子？我们计划利用海量质谱数据来寻找和挖掘这些未知代谢物，并阐明它们在生物医学中的重要意义。
