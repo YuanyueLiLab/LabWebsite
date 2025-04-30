@@ -18,11 +18,11 @@ marketing:
     site_type: Organization
     local_business_type: ''
     org_name: ''
-    description: 'Li Lab'
+    description: Yuanyue Li Lab - 李渊越实验室
     # twitter: 'LiYuanyue'
   analytics:
     google_analytics: 'G-V7RYYW6LE8'
-    baidu_tongji: ''
+    baidu_tongji: '4b8588103558b456f19413de4c0049a7'
     google_tag_manager: ''
     microsoft_clarity: ''
   verification:
