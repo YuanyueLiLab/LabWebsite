@@ -13,8 +13,6 @@ authors:
 - Yaying Wu
 - Jinan Chen
 - Jiahuai Han
-publication_types:
-- '2'
 abstract: Tumor necrosis factor (TNF) induced cell death in murine fibrosarcoma L929
   cells is a model system in studying programed necrosis (also known as necroptosis).
   Receptor interacting protein 3 (RIP3), a serine?threonine kinase, is known to play

@@ -10,8 +10,6 @@ authors:
 - Arpana Vaniya
 - Patrick M. Shih
 - Oliver Fiehn
-publication_types:
-- '2'
 abstract: ''
 featured: false
 publication: '*Analytical Chemistry*'

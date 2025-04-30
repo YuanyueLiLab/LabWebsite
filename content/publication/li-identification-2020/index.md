@@ -9,8 +9,6 @@ authors:
 - Michael Kuhn
 - Anne-Claude Gavin
 - Peer Bork
-publication_types:
-- '2'
 abstract: "MOTIVATION: Untargeted mass spectrometry (MS/MS) is a powerful method for\
   \ detecting metabolites in biological samples. However, fast and accurate identification\
   \ of the metabolites' structures from MS/MS spectra is still a great challenge.\

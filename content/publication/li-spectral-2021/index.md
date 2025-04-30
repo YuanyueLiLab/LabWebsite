@@ -11,8 +11,6 @@ authors:
 - Arpana Vaniya
 - Sajjan Singh Mehta
 - Oliver Fiehn
-publication_types:
-- '2'
 abstract: Compound identification in small-molecule research, such as untargeted metabolomics
   or exposome research, relies on matching tandem mass spectrometry (MS/MS) spectra
   against experimental or in silico mass spectral libraries. Most software programs

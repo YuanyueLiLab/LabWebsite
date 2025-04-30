@@ -15,8 +15,6 @@ authors:
 - Jianghong Shi
 - Shengcai Lin
 - Jiahuai Han
-publication_types:
-- '2'
 abstract: ''
 featured: true
 publication: '*Nature Methods*'

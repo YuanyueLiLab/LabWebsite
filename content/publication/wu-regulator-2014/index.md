@@ -13,8 +13,6 @@ authors:
 - Ying-Ying Zhang
 - Duan-Wu Zhang
 - Jiahuai Han
-publication_types:
-- '2'
 abstract: Autophagy has diverse biological functions and is involved in many biological
   processes. The L929 cell death induced by the pan-caspase inhibitor benzyloxycarbonyl-Val-Ala-Asp-(OMe)-fluoromethyl
   ketone (zVAD) was shown to be an autophagy-mediated death for which RIP1 and RIP3

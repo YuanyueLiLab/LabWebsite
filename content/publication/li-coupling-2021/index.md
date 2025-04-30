@@ -15,8 +15,6 @@ authors:
 - Martin Beck
 - Anne-Claude Gavin
 - Peer Bork
-publication_types:
-- '2'
 abstract: Protein–metabolite interactions play an important role in the cell’s metabolism
   and many methods have been developed to screen them in vitro. However, few methods
   can be applied at a large scale and not alter biological state. Here we describe

@@ -21,8 +21,6 @@ authors:
 - Peer Bork
 - Martin Beck
 - Anne-Claude Gavin
-publication_types:
-- '2'
 abstract: Abstract The arrangement of proteins into complexes is a key organizational
   principle for many cellular functions. Although the topology of many complexes has
   been systematically analyzed in isolation, their molecular sociology in situ remains

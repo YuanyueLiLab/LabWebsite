@@ -16,8 +16,6 @@ authors:
 - Daniel C. Douek
 - David A. Price
 - Jiahuai Han
-publication_types:
-- '2'
 abstract: Overlap of TCR repertoires among individuals provides the molecular basis
   for public T cell responses. By deep-sequencing the TCRβ repertoires of CD4+CD8+
   thymocytes from three individual mice, we observed that a substantial degree of

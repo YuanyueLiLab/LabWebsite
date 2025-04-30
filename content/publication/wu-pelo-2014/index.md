@@ -16,8 +16,6 @@ authors:
 - Felicia Han
 - Jianming Chen
 - Jiahuai Han
-publication_types:
-- '2'
 abstract: Author Summary Viruses often can highly efficiently utilize the host system
   to make huge amounts of viral proteins for their replication; however, which host
   factors are needed by the viruses are largely unknown. We analyzed about one hundred

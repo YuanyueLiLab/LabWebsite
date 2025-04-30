@@ -19,8 +19,6 @@ authors:
 - Yongming Xie
 - Jiahuai Han
 - Chuan-Qi Zhong
-publication_types:
-- '2'
 abstract: Receptor interacting protein 3 (RIP3) is a protein kinase that plays a key
   role in programmed necrosis. Despite the importance of RIP3-dependent necrosis in
   many pathological processes, current knowledge on the function of RIP3 is very limited.

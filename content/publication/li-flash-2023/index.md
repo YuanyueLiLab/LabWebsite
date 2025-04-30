@@ -6,8 +6,6 @@ publishDate: '2023-09-21T22:22:43.041650Z'
 authors:
 - Yuanyue Li
 - Oliver Fiehn
-publication_types:
-- '2'
 abstract: Public repositories of metabolomics mass spectra encompass more than 1 billion
   entries. With open search, dot product or entropy similarity, comparisons of a single
   tandem mass spectrometry spectrum take more than 8 h. Flash entropy search speeds
