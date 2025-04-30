@@ -16,12 +16,15 @@ main:
   - name: Publications
     url: publication
     weight: 40
+  - name: Projects
+    url: projects
+    weight: 45
   - name: Presentations
     url: event
     weight: 50
-  - name: PI
-    url: https://yuanyue.li
-    weight: 55
+  # - name: PI🔗
+  #   url: https://yuanyue.li
+  #   weight: 55
   - name: People
     url: people
     weight: 60
