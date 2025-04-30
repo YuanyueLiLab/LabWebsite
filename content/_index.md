@@ -24,12 +24,12 @@ sections:
           text: Research
           url: ../research/
 
-      - title: 🙌 Join the Li Lab
+      - title: 🔭 Join the Li Lab
         content: Let's explore the world of science together!
         align: center
         background:
           image:
-            filename: sky.jpg
+            filename: earth_from_moon.jpg
             filters:
               brightness: 0.7
           position: center

@@ -1,0 +1,10 @@
+{{/* Function to get logo image. */}}
+{{/* Inputs: constraint: max_height/fit (str); size (int) */}}
+{{/* Output: resource (obj) */}}
+
+{{/* Workaround fact Hugo does not support GetMatch in assets dir */}}
+{{/* Hugo doesn't support image ops on SVG: https://discourse.gohugo.io/t/ho-do-i-convert-a-generic-resource-to-image-resource/22570/4 */}}
+{{ $logo := resources.Get "media/logo.png" | default (resources.Get "media/logo.svg") }}
+{{ $logo_proc := $logo }}
+
+{{ return $logo_proc }}
