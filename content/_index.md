@@ -14,8 +14,6 @@ sections:
         background:
           image:
             filename: sky.jpg
-            filters:
-              brightness: 0.7
           position: right
           color: '#666'
         link:
@@ -30,8 +28,6 @@ sections:
         background:
           image:
             filename: earth_from_moon.jpg
-            filters:
-              brightness: 0.7
           position: center
           color: '#555'
         link:
