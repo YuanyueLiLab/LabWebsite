@@ -18,8 +18,9 @@ sections:
 
   - block: markdown.self
     content:
-      title: 代谢组学方向博士后
+      title: 博士后招聘
       text: |
+      # 博士后招聘
         一.  技能要求
 
         1)   计算代谢组学方向
@@ -63,8 +64,9 @@ sections:
         
   - block: markdown.self
     content:
-      title: 科研助理
+      title: 科研助理招聘
       text: |
+      # 科研助理招聘
         一.  岗位要求
         1.   对探索未知事物感兴趣，热爱科研。
         2.   该岗位将主要参与人工智能、大数据方向的代谢组学算法开发及质谱数据分析。我们期待对代谢组学方向充满兴趣的申请者加入。

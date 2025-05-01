@@ -19,7 +19,7 @@ sections:
         link:
           icon: magnifying-glass
           icon_pack: fas
-          text: Take a look at what we're working on
+          text: Our research
           url: ../research/
 
       - title: 🔭 Join the Li Lab
