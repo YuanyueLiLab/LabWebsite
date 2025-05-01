@@ -4,7 +4,7 @@ date: 2025-04-26
 type: landing
 
 sections:  
-  - block: markdown.self
+  - block: markdown
     content:
       title: Developing New Methods for Metabolomics
       text: |-
@@ -15,7 +15,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 寻找生物医学中关键的新型代谢物
       subtitle: '找生'
@@ -27,7 +27,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 利用代谢组学对人体进行数字化分析
       subtitle: ''
@@ -39,7 +39,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 想了解更多？
       subtitle: ''
