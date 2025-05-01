@@ -9,7 +9,7 @@ sections:
     content:
       slides:
       - title: 👋 Welcome to the Li Lab
-        content: Take a look at what we're working on...
+        content: We are a lab focused on metabolomics, AI, and big data.          
         align: center
         background:
           image:
@@ -17,9 +17,9 @@ sections:
           position: right
           color: '#666'
         link:
-          icon: palette
+          icon: magnifying-glass
           icon_pack: fas
-          text: Research
+          text: Take a look at what we're working on
           url: ../research/
 
       - title: 🔭 Join the Li Lab
