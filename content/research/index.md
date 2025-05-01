@@ -4,7 +4,7 @@ date: 2025-04-26
 type: widget_page
 
 sections:  
-  - block: markdown.self
+  - block: markdown
     content:
       title: 代谢组学新方法的开发
       text: |-
@@ -15,7 +15,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 寻找生物医学中关键的新型代谢物
       subtitle: ''
@@ -27,7 +27,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 利用代谢组学对人体进行数字化分析
       subtitle: ''
@@ -39,7 +39,7 @@ sections:
       spacing:
         padding: ['20px', '0', '20px', '0']
 
-  - block: markdown.self
+  - block: markdown
     content:
       title: 想了解更多？
       subtitle: ''
