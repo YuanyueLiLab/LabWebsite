@@ -1,0 +1,4 @@
+bibtexparser
+ruamel.yaml
+nbconvert
+pyyaml
