@@ -29,7 +29,7 @@ publication_types:
 - manuscript
 
 # Publication name and optional abbreviated publication name.
-publication: '*Springer Science and Business Media LLC*'
+publication: '*Nature Communications*'
 publication_short: ''
 
 doi: 10.21203/rs.3.rs-5530740/v1
