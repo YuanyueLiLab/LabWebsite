@@ -8,7 +8,7 @@ sections:
   - block: slider
     content:
       slides:
-      - title: 👋 Welcome to the Li Lab
+      - title: 👋 Welcome to Yuanyue Li Lab
         content: We are a lab focused on metabolomics, AI, and big data.          
         align: center
         background:
