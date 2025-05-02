@@ -70,7 +70,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ap-east-1
   
       # - name: Deploy static site to S3 bucket
       #   run: aws s3 sync ./public s3://lilab.cool --delete
@@ -78,7 +78,7 @@ jobs:
       - name: Create Amplify Deployment
         id: deploy
         run: |
-          DEPLOYMENT=$(aws amplify create-deployment --app-id d2jv907cygwoun --branch-name Public)
+          DEPLOYMENT=$(aws amplify create-deployment --app-id d28nftddrio00x --branch-name production)
           echo "$DEPLOYMENT"
           UPLOAD_URL=$(echo "$DEPLOYMENT" | jq -r '.zipUploadUrl')
           JOB_ID=$(echo "$DEPLOYMENT" | jq -r '.jobId')
@@ -91,4 +91,4 @@ jobs:
           curl -T site.zip "$UPLOAD_URL"
 
           # Start the deployment
-          aws amplify start-deployment --app-id d2jv907cygwoun --branch-name Public --job-id "$JOB_ID"
+          aws amplify start-deployment --app-id d28nftddrio00x --branch-name production --job-id "$JOB_ID"
