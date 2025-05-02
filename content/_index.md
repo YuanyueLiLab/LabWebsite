@@ -17,9 +17,9 @@ sections:
           position: right
           color: '#666'
         link:
-          icon: magnifying-glass
-          icon_pack: fas
-          text: Our research
+          # icon: magnifying-glass
+          # icon_pack: fas
+          text: 🔬 Our research
           url: ../research/
 
       - title: 🔭 Join the Li Lab
