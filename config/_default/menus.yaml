@@ -34,6 +34,6 @@ main:
   - name: Contact
     url: contact
     weight: 80
-  # - name: Wiki (internal)
-  #   url: https://wiki.lilab.cool
-  #   weight: 90
+  - name: Wiki (internal)
+    url: http://wiki.lilab.cool
+    weight: 90
