@@ -61,7 +61,9 @@
         {{ end }}
 
         <div class="portrait-title">
-          <h2>{{with $link}}<a href="{{.}}">{{end}}{{ .Title }}{{if $link}}</a>{{end}}<br/>{{ .Params.title_chinese | markdownify | emojify }}</h2>
+          <h2>{{with $link}}<a href="{{.}}">{{end}}{{ .Title }}{{if $link}}</a>{{end}}<br/>
+            {{ .Params.title_chinese | markdownify | emojify }}</h2>
+          <h3>{{ .Params.email | markdownify | emojify }}</h3>
           {{ if and $show_organizations .Params.organizations }}{{ range .Params.organizations }}<h3>{{ .name }}</h3>{{ end }}{{ end }}
           {{ if and $show_role .Params.role }}<h3>{{ .Params.role | markdownify | emojify }}</h3>{{ end }}
           {{ if $show_social }}{{ partial "social_links" . }}{{ end }}

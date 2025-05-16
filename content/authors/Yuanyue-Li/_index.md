@@ -43,7 +43,7 @@ education:
 social:
   - icon: envelope
     icon_pack: fas
-    link: '/#contact'
+    link: 'mailto:yuanyueli@zju.edu.cn'
   - icon: twitter
     icon_pack: fab
     link: https://twitter.com/LiYuanyue
@@ -83,10 +83,6 @@ user_groups:
   
 ---
 
-I am Yuanyue Li, a bioinformatics scientist with a passion for understanding the molecular mechanisms of life by combining experimental and computational methods. I hope my research can help to answer those questions: 1) How many different molecules are there in a cell? 2) How do they interact with each other? 3) How do they work together to make a cell functional?
+I am Yuanyue Li, a bioinformatics scientist with a passion for understanding the molecular mechanisms of life by combining experimental and computational methods. I grew up and earned my doctoral degree in China, and then spent several enriching years working in Germany and the United States. Currently, I am leading a research group at Zhejiang University in China. In my spare time, I enjoy exploring the world with my wife and our two daughters.
 
-Mass spectrometry is a powerful tool for measuring molecules with high sensitivity and accuracy. Therefore, I use mass spectrometry as my primary tool to measure molecules. I have developed serval methods to maximize the capabilities of mass spectrometry in life science research. Feel free to visit my [GitHub](https://github.com/YuanyueLi) page to try out the tools I've developed.
-
-I grew up and received my doctoral degree in China, then enjoyed several years working in Germany and United States. Currently, I am working at Zhejiang University in China as an independent PI. In my spare time, I enjoy exploring the world with my wife and our two daughters.
-
-I am actively seeking talented research assistants, graduate students, and postdoctoral researchers to join my lab. If you are interested in my research, please do not hesitate to send my an Email, I look forward to hearing from you!
+Metabolites are the foundation of biological activity, playing crucial roles in processes such as energy production, signaling, and the regulation of cellular functions. Understanding their composition and dynamics is essential for deciphering the complex biochemical networks that drive cellular behavior. Mass spectrometry is a powerful tool for measuring molecules with high sensitivity and accuracy. Therefore, I use mass spectrometry as a primary tool to analyze metabolites. I have developed several methods to enhance the capabilities of mass spectrometry in life science research. Feel free to visit my [GitHub](https://github.com/YuanyueLi) page to explore the tools I’ve created.
