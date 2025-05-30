@@ -13,11 +13,6 @@ superuser: true
 # Role/position
 role: ZJU 100 Young Professor
 
-# Organizations/Affiliations
-organizations:
-  - name: Zhejiang University
-    url: https://www.zju.edu.cn/
-
 # Short bio (displayed in user profile at end of posts)
 bio: I develop methods for metabolomics.
 
