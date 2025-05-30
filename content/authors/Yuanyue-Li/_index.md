@@ -17,9 +17,10 @@ role: ZJU 100 Young Professor
 bio: I develop methods for metabolomics.
 
 interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
+  - Mass Spectrometry
+  - Metabolomics
+  - Biochemistry
+  - Molecular Biology
 
 # Education to show in About widget
 education:
