@@ -49,6 +49,7 @@ user_groups:
 ---
 
 I am Zhiqiang Chen, interested in computational and experimental metabolomics.
-I obtained a bachelor's degree in Traditional Chinese Medicine from China Pharmaceutical University My academic journey began with a master’s degree focused on natural product research within Chinese herbal medicines. This foundation led me to pursue a PhD, where I conducted mass spectrometry-based metabolomics research, driving biomarker discovery and the development of novel analytical strategies.
-Currently, I serve as a postdoctoral researcher in Professor Li’s laboratory at Zhejiang University, China. My work focuses on computational metabolomics. By integrating bioinformatics with biological experimentation and leveraging technologies including artificial intelligence and big data analytics, it aims to the integrated analysis of metabolomic data, novel metabolite discovery, and the development of innovative methodologies.
 
+I obtained a bachelor's degree in Traditional Chinese Medicine from China Pharmaceutical University My academic journey began with a master’s degree focused on natural product research within Chinese herbal medicines. This foundation led me to pursue a PhD, where I conducted mass spectrometry-based metabolomics research, driving biomarker discovery and the development of novel analytical strategies.
+
+Currently, I serve as a postdoctoral researcher in Professor Li’s laboratory at Zhejiang University, China. My work focuses on computational metabolomics. By integrating bioinformatics with biological experimentation and leveraging technologies including artificial intelligence and big data analytics, it aims to the integrated analysis of metabolomic data, novel metabolite discovery, and the development of innovative methodologies.
