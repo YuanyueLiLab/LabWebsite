@@ -1,8 +1,8 @@
-name = "Li Lab"
+name = "Yuanyue Li Lab"
 license = "MIT"
 licenselink = "https://github.com/YuanyueLiLab/LabWebsite/blob/main/LICENSE.md"
-description = "The website for Yuanyue Li Lab, a research group at the Zhejiang University. The website is built with Hugo and uses the Wowchemy Academic theme."
-homepage = "https://github.com/wowchemy/starter-hugo-research-group"
+description = "The website for Yuanyue Li Lab, a research group at the Zhejiang University."
+homepage = "https://lilab.cool"
 demosite = "https://lilab.cool"
 tags = ["academic",
         "university",
