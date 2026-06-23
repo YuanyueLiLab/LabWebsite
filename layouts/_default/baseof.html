@@ -15,12 +15,42 @@
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
 </head>
-<body>
+{{ $isResearch := eq .RelPermalink ("/research/" | relURL) }}
+{{ $bodyClasses := slice }}
+{{ if .IsHome }}
+  {{ $bodyClasses = $bodyClasses | append "is-home" }}
+{{ end }}
+{{ if $isResearch }}
+  {{ $bodyClasses = $bodyClasses | append "is-research" }}
+{{ end }}
+<body{{ with $bodyClasses }} class="{{ delimit . " " }}"{{ end }}>
   <a class="skip-link" href="#main">Skip to content</a>
   {{ partial "header.html" . }}
   <main id="main">
     {{ block "main" . }}{{ end }}
   </main>
-  {{ partial "footer.html" . }}
+  {{ if and (not .IsHome) (not $isResearch) }}
+    {{ partial "footer.html" . }}
+  {{ end }}
+  {{ if or .IsHome $isResearch }}
+    {{ with resources.Get "js/vendor/sky.js" }}
+      {{ $sky := . | minify | fingerprint }}
+      <script src="{{ $sky.RelPermalink }}" integrity="{{ $sky.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+    {{ with resources.Get "js/home-stars.js" }}
+      {{ $stars := . | minify | fingerprint }}
+      <script src="{{ $stars.RelPermalink }}" integrity="{{ $stars.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+  {{ end }}
+  {{ if .IsHome }}
+    {{ with resources.Get "js/home-slides.js" }}
+      {{ $slides := . | minify | fingerprint }}
+      <script src="{{ $slides.RelPermalink }}" integrity="{{ $slides.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+  {{ end }}
+  {{ with resources.Get "js/page-transition.js" }}
+    {{ $js := . | minify | fingerprint }}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous" defer></script>
+  {{ end }}
 </body>
 </html>

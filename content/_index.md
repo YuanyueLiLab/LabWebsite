@@ -11,11 +11,6 @@ sections:
       - title: 👋 Welcome to Li Lab
         content: We are a lab focused on metabolomics, AI, and big data.          
         align: center
-        background:
-          image:
-            filename: sky.jpg
-          position: right
-          color: '#666'
         link:
           # icon: magnifying-glass
           # icon_pack: fas
@@ -25,11 +20,6 @@ sections:
       - title: 🔭 Join the Li Lab
         content: Let's explore the world of science together!
         align: center
-        background:
-          image:
-            filename: earth_from_moon.jpg
-          position: center
-          color: '#555'
         link:
           icon: graduation-cap
           icon_pack: fas

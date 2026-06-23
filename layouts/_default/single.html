@@ -1,5 +1,42 @@
 {{ define "main" }}
-{{ if eq .RelPermalink ("/people/" | relURL) }}
+{{ if eq .RelPermalink ("/research/" | relURL) }}
+  <article class="research-page">
+    <div class="sky-stars research-stars" aria-hidden="true"></div>
+    <div class="research-page__content">
+      <div class="research-container research-title">
+        <h1>{{ .Title }}</h1>
+        {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
+      </div>
+
+      <div class="research-container">
+        {{ if .Params.sections }}
+          {{ range $index, $section := .Params.sections }}
+            {{ if eq .block "markdown" }}
+              <section id="research-section-{{ add $index 1 }}" class="research-section">
+                <div class="research-section__heading">
+                  <p class="research-section__label">{{ with .content.label }}{{ . }}{{ else }}{{ printf "Direction %02d" (add $index 1) }}{{ end }}</p>
+                  {{ with .content.title }}
+                    <h2>{{ . }}</h2>
+                  {{ end }}
+                </div>
+                <div class="research-section__body">
+                  {{ with .content.image }}
+                    <figure class="research-image"><img src="{{ . }}" width="600" height="240" alt=""></figure>
+                  {{ end }}
+                  <div class="rich-text">{{ .content.text | markdownify }}</div>
+                </div>
+              </section>
+            {{ end }}
+          {{ end }}
+        {{ end }}
+
+        {{ with .Content }}
+          <div class="article-content rich-text">{{ . }}</div>
+        {{ end }}
+      </div>
+    </div>
+  </article>
+{{ else if eq .RelPermalink ("/people/" | relURL) }}
   {{ $members := sort (where (where site.Pages "Section" "members") "Params.role" "!=" nil) "Params.last_name" }}
   <header class="page-hero">
     <div class="section__inner">

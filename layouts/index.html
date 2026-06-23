@@ -1,169 +1,62 @@
 {{ define "main" }}
-{{ $hero := resources.Get "media/sky.jpg" }}
-{{ with $hero }}{{ $hero = .Fill "2200x1100 Center webp q82" }}{{ end }}
-{{ $moon := resources.Get "media/earth_from_moon.jpg" }}
-{{ with $moon }}{{ $moon = .Fill "2200x900 Center webp q82" }}{{ end }}
-{{ $research := site.GetPage "/research" }}
-{{ $people := site.GetPage "/people" }}
-{{ $projects := first 4 (where site.RegularPages.ByDate.Reverse "Section" "projects") }}
-{{ $publications := first 4 (where (where site.RegularPages.ByDate.Reverse "Section" "publication") "Params.featured" true) }}
-{{ $news := first 3 (where site.RegularPages.ByDate.Reverse "Section" "news") }}
-{{ $members := sort (where (where site.Pages "Section" "members") "Params.role" "!=" nil) "Params.last_name" }}
-
-<section class="home-hero"{{ with $hero }} style="--hero-image: url('{{ .RelPermalink }}');"{{ end }}>
-  <div class="home-hero__inner">
-    <div class="home-hero__copy">
-      <h1>👋 Welcome to {{ site.Params.lab_name }}</h1>
-      <p>
-        We are a lab focused on metabolomics, AI, and big data.
-      </p>
-      <div class="button-row">
-        <a class="button button--light" href="{{ "/research/" | relURL }}">🔬 Our research</a>
-        <a class="button button--ghost" href="{{ "/hiring/" | relURL }}">Join us</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section--intro">
-  <div class="section__inner intro-band">
-    <p class="intro-band__lead">Metabolomics methods for unknown molecules, biomedical discovery, and digital analysis of human biology.</p>
-    <div class="intro-band__meta">
-      <span>Mass spectrometry</span>
-      <span>Computational metabolomics</span>
-      <span>AI and big data</span>
-    </div>
-  </div>
-</section>
-
-{{ with $research }}
-  <section class="section" id="research">
-    <div class="section__inner">
-      <div class="section-heading">
-        <p class="eyebrow">Research</p>
-        <h2>{{ .Title }}</h2>
-      </div>
-
-      <div class="feature-grid">
-        {{ range first 3 .Params.sections }}
-          <article class="feature-card rich-card">
-            <h3>{{ .content.title }}</h3>
-            <div class="rich-text">
-              {{ .content.text | markdownify }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-      <div class="section-link">
-        <a href="{{ .RelPermalink }}">Read more about our research</a>
-      </div>
-    </div>
-  </section>
+{{ $slides := slice }}
+{{ $slideInterval := 7000 }}
+{{ range .Params.sections }}
+  {{ if eq .block "slider" }}
+    {{ with .design.interval }}
+      {{ $slideInterval = . }}
+    {{ end }}
+    {{ range .content.slides }}
+      {{ $slides = $slides | append . }}
+    {{ end }}
+  {{ end }}
 {{ end }}
 
-<section class="section section--soft">
-  <div class="section__inner">
-    <div class="section-heading section-heading--split">
-      <div>
-        <p class="eyebrow">Projects</p>
-        <h2>Open tools and methods from the lab.</h2>
-      </div>
-      <a class="text-link" href="{{ "/projects/" | relURL }}">All projects</a>
-    </div>
-
-    <div class="project-grid">
-      {{ range $projects }}
-        {{ $project := . }}
-        <article class="project-card">
-          {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
-            {{ $img := .Fill "720x440 Center webp q82" }}
-            <a class="project-card__image" href="{{ $project.RelPermalink }}">
-              <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="">
-            </a>
+<section class="home-hero">
+  <div class="sky-stars" aria-hidden="true"></div>
+  <div class="home-hero__inner">
+    {{ if gt (len $slides) 0 }}
+      <div class="home-slider" data-home-slides data-slider-interval="{{ $slideInterval }}">
+        <div class="home-slider__track">
+          {{ range $index, $slide := $slides }}
+            {{ $isActive := eq $index 0 }}
+            <article class="home-slide{{ if $isActive }} is-active{{ end }}" data-home-slide aria-hidden="{{ cond $isActive "false" "true" }}">
+              <div class="home-slide__content{{ with $slide.align }} home-slide__content--{{ . }}{{ end }}">
+                {{ with $slide.title }}<h1>{{ . | markdownify }}</h1>{{ end }}
+                {{ with $slide.content }}<p>{{ . | markdownify }}</p>{{ end }}
+                {{ with $slide.link }}
+                  {{ $href := .url }}
+                  {{ if hasPrefix $href "../" }}
+                    {{ $href = replace $href "../" "/" }}
+                  {{ end }}
+                  {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                  <div class="button-row">
+                    <a class="button button--light" href="{{ cond $isExternal $href ($href | relURL) }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>{{ .text }}</a>
+                  </div>
+                {{ end }}
+              </div>
+            </article>
           {{ end }}
-          <div class="project-card__body">
-            <p class="meta">{{ .Date.Format "2006" }}</p>
-            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-            {{ with .Params.summary }}<p>{{ . | markdownify | plainify | truncate 170 }}</p>{{ end }}
+        </div>
+
+        {{ if gt (len $slides) 1 }}
+          <div class="home-slider__controls" aria-label="Slide controls">
+            <button class="home-slider__arrow" type="button" data-slide-prev aria-label="Previous slide">‹</button>
+            <div class="home-slider__dots">
+              {{ range $index, $slide := $slides }}
+                <button class="home-slider__dot{{ if eq $index 0 }} is-active{{ end }}" type="button" data-slide-dot="{{ $index }}" aria-label="Show slide {{ add $index 1 }}"{{ if eq $index 0 }} aria-current="true"{{ end }}></button>
+              {{ end }}
+            </div>
+            <button class="home-slider__arrow" type="button" data-slide-next aria-label="Next slide">›</button>
           </div>
-        </article>
-      {{ end }}
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="section__inner two-column">
-    <div>
-      <div class="section-heading">
-        <p class="eyebrow">Featured publications</p>
-        <h2>Selected papers in metabolomics and mass spectrometry.</h2>
-      </div>
-      <div class="citation-list citation-list--compact">
-        {{ range $publications }}
-          <article class="citation">
-            <time>{{ .Date.Format "2006" }}</time>
-            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-            {{ with .Params.publication }}<p>{{ . | markdownify }}</p>{{ end }}
-          </article>
         {{ end }}
       </div>
-      <div class="section-link">
-        <a href="{{ "/publication/" | relURL }}">View all publications</a>
+    {{ else }}
+      <div class="home-hero__copy">
+        <h1>{{ site.Params.lab_name }}</h1>
+        <p>{{ site.Params.lab_name_zh }} · Metabolomics, AI, and big data</p>
       </div>
-    </div>
-
-    <aside class="news-panel">
-      <p class="eyebrow">Latest news</p>
-      {{ range $news }}
-        <article>
-          <time>{{ .Date.Format "Jan 2, 2006" }}</time>
-          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        </article>
-      {{ end }}
-      <a class="text-link" href="{{ "/news/" | relURL }}">News archive</a>
-    </aside>
-  </div>
-</section>
-
-<section class="section section--dark">
-  <div class="section__inner section-heading--split">
-    <div>
-      <p class="eyebrow">People</p>
-      <h2>Researchers building experimental and computational metabolomics together.</h2>
-    </div>
-    <a class="button button--light" href="{{ "/people/" | relURL }}">Meet the team</a>
-  </div>
-
-  <div class="section__inner member-strip">
-    {{ range first 4 $members }}
-      <a class="member-mini" href="{{ .RelPermalink }}">
-        {{ with .Resources.GetMatch "avatar.*" }}
-          {{ $avatar := .Fill "240x240 Center webp q82" }}
-          <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
-        {{ end }}
-        <span>
-          <strong>{{ .Title }}</strong>
-          <small>{{ .Params.role }}</small>
-        </span>
-      </a>
     {{ end }}
-  </div>
-</section>
-
-<section class="section cta-section"{{ with $moon }} style="--cta-image: url('{{ .RelPermalink }}');"{{ end }}>
-  <div class="section__inner cta-grid">
-    <div>
-      <p class="eyebrow">Join Li Lab</p>
-      <h2>Explore metabolomics at the edge of computation and biology.</h2>
-    </div>
-    <div>
-      <p>We welcome postdoctoral researchers, research assistants, graduate students, and motivated undergraduate interns.</p>
-      <div class="button-row">
-        <a class="button button--primary" href="{{ "/hiring/" | relURL }}">Open positions</a>
-        <a class="button button--secondary" href="mailto:{{ site.Params.hiring_email }}">{{ site.Params.hiring_email }}</a>
-      </div>
-    </div>
   </div>
 </section>
 
