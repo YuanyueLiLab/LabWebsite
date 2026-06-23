@@ -1,0 +1,10 @@
+pi:
+  name: "Yuanyue Li"
+  role: "Principal Investigator"
+  bio: "Yuanyue Li leads a metabolomics research lab focused on mass spectrometry, computational metabolomics, and biological discovery."
+  email: "yuanyue.li@example.edu"
+
+members:
+  - name: "Graduate Researchers"
+    role: "Students and trainees"
+    interests: "LC-MS/MS, metabolite annotation, computational biology"

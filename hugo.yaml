@@ -1,0 +1,29 @@
+baseURL: "https://example.edu/"
+title: "Yuanyue Li Lab"
+locale: "en-us"
+disableKinds:
+  - "taxonomy"
+  - "term"
+
+params:
+  description: "Metabolomics, mass spectrometry, and systems biology research led by Yuanyue Li."
+  lab_name: "Yuanyue Li Lab"
+  pi_name: "Yuanyue Li"
+  email: "yuanyue.li@example.edu"
+  institution: "Your Institution"
+  location: "City, State"
+
+menus:
+  main:
+    - name: "Research"
+      url: "#research"
+      weight: 10
+    - name: "Approach"
+      url: "#approach"
+      weight: 20
+    - name: "People"
+      url: "#people"
+      weight: 30
+    - name: "Contact"
+      url: "#contact"
+      weight: 40

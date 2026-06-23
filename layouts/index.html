@@ -1,0 +1,129 @@
+{{ define "main" }}
+
+<section class="hero" id="home">
+  <img class="hero__image" src="{{ "images/metabolomics-hero.png" | relURL }}" alt="" fetchpriority="high">
+  <div class="hero__content">
+    <p class="eyebrow">Metabolomics · Mass spectrometry · Computation</p>
+    <h1>{{ site.Params.lab_name }}</h1>
+    <p class="hero__copy">
+      We measure small molecules at scale and build computational methods that turn complex
+      mass spectrometry data into biological insight.
+    </p>
+    <div class="hero__actions" aria-label="Primary actions">
+      <a class="button button--primary" href="#research">Explore research</a>
+      <a class="button button--secondary" href="mailto:{{ site.Params.email }}">Contact the lab</a>
+    </div>
+    <dl class="hero__stats" aria-label="Lab focus areas">
+      <div>
+        <dt>LC-MS/MS</dt>
+        <dd>Analytical workflows</dd>
+      </div>
+      <div>
+        <dt>Annotation</dt>
+        <dd>Spectra to molecules</dd>
+      </div>
+      <div>
+        <dt>Biology</dt>
+        <dd>Interpretable discovery</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="section intro-section" aria-label="Lab overview">
+  <div class="section__inner intro-grid">
+    <p class="intro-kicker">A modern metabolomics lab for measurement, computation, and discovery.</p>
+    <p class="intro-text">
+      Our group develops experimental and computational approaches for metabolomics, with an
+      emphasis on robust mass spectrometry, confident molecular interpretation, and collaborative
+      biomedical applications.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="research">
+  <div class="section__inner">
+    <div class="section-heading">
+      <p class="eyebrow">Research</p>
+      <h2>Focused on the molecules that report biological state.</h2>
+    </div>
+
+    <div class="focus-grid">
+      {{ range $index, $item := hugo.Data.research }}
+        <article class="focus-card">
+          <span class="focus-card__number">{{ printf "%02d" (add $index 1) }}</span>
+          <h3>{{ $item.title }}</h3>
+          <p>{{ $item.text }}</p>
+        </article>
+      {{ end }}
+    </div>
+  </div>
+</section>
+
+<section class="approach-section" id="approach">
+  <div class="section__inner approach-grid">
+    <div>
+      <p class="eyebrow eyebrow--light">Approach</p>
+      <h2>From samples to biological interpretation.</h2>
+    </div>
+    <ol class="workflow-list">
+      <li>
+        <strong>Measure</strong>
+        <span>Collect high-quality metabolomics data with reproducible LC-MS/MS workflows.</span>
+      </li>
+      <li>
+        <strong>Annotate</strong>
+        <span>Link spectral signals to candidate molecules, pathways, and chemical families.</span>
+      </li>
+      <li>
+        <strong>Model</strong>
+        <span>Use statistics and machine learning to identify patterns that can be tested biologically.</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="people">
+  <div class="section__inner people-grid">
+    <div class="section-heading">
+      <p class="eyebrow">People</p>
+      <h2>Built for collaborative, data-rich biology.</h2>
+    </div>
+
+    <div class="person-panel">
+      <p class="person-panel__role">{{ hugo.Data.people.pi.role }}</p>
+      <h3>{{ hugo.Data.people.pi.name }}</h3>
+      <p>{{ hugo.Data.people.pi.bio }}</p>
+      <a href="mailto:{{ hugo.Data.people.pi.email }}">{{ hugo.Data.people.pi.email }}</a>
+
+      {{ with hugo.Data.people.members }}
+        <div class="team-list" aria-label="Lab members">
+          {{ range . }}
+            <div>
+              <strong>{{ .name }}</strong>
+              <span>{{ .role }} · {{ .interests }}</span>
+            </div>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="section__inner contact-grid">
+    <div>
+      <p class="eyebrow">Contact</p>
+      <h2>Interested in metabolomics, mass spectrometry, or data-driven biology?</h2>
+    </div>
+    <div class="contact-actions">
+      <p>
+        We welcome conversations with students, collaborators, and researchers interested in
+        building better ways to measure and interpret metabolism.
+      </p>
+      <a class="button button--primary" href="mailto:{{ site.Params.email }}">Email {{ site.Params.pi_name }}</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}

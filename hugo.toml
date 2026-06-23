@@ -1,0 +1,32 @@
+baseURL = 'https://example.edu/'
+locale = 'en-us'
+title = 'Yuanyue Li Lab'
+disableKinds = ['taxonomy', 'term']
+
+[params]
+description = 'Metabolomics, mass spectrometry, and computational biology research led by Yuanyue Li.'
+lab_name = 'Yuanyue Li Lab'
+pi_name = 'Yuanyue Li'
+email = 'yuanyue.li@example.edu'
+institution = 'Your Institution'
+location = 'City, State'
+
+[[menus.main]]
+name = 'Research'
+url = '#research'
+weight = 10
+
+[[menus.main]]
+name = 'Approach'
+url = '#approach'
+weight = 20
+
+[[menus.main]]
+name = 'People'
+url = '#people'
+weight = 30
+
+[[menus.main]]
+name = 'Contact'
+url = '#contact'
+weight = 40

@@ -1,2 +1,0 @@
-class AcademicError(Exception):
-    pass

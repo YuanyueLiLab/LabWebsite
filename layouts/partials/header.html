@@ -1,0 +1,17 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} home">
+      <span class="brand__mark">YL</span>
+      <span class="brand__text">
+        <strong>{{ site.Params.lab_name }}</strong>
+        <span>{{ site.Params.institution }}</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      {{ range site.Menus.main }}
+        <a href="{{ .URL }}">{{ .Name }}</a>
+      {{ end }}
+    </nav>
+  </div>
+</header>
