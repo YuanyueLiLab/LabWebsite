@@ -1,29 +1,49 @@
-baseURL: "https://example.edu/"
-title: "Yuanyue Li Lab"
+baseURL: "https://lilab.cool/"
+title: "Yuanyue Li Lab - 李渊越实验室"
 locale: "en-us"
+cacheDir: "/x1/github/LabWebsite/resources/_cache"
 disableKinds:
   - "taxonomy"
   - "term"
 
 params:
-  description: "Metabolomics, mass spectrometry, and systems biology research led by Yuanyue Li."
+  description: "Li Lab at Zhejiang University develops metabolomics, mass spectrometry, AI, and big-data methods for biomedical discovery."
   lab_name: "Yuanyue Li Lab"
+  lab_name_zh: "李渊越实验室"
   pi_name: "Yuanyue Li"
-  email: "yuanyue.li@example.edu"
-  institution: "Your Institution"
-  location: "City, State"
+  email: "YuanyueLi@zju.edu.cn"
+  hiring_email: "future@lilab.cool"
+  institution: "Zhejiang University School of Medicine"
+  location: "Hangzhou, Zhejiang, China"
 
 menus:
   main:
+    - name: "Home"
+      url: "/"
+      weight: 1
     - name: "Research"
-      url: "#research"
+      url: "/research/"
       weight: 10
-    - name: "Approach"
-      url: "#approach"
+    - name: "Publications"
+      url: "/publication/"
       weight: 20
-    - name: "People"
-      url: "#people"
+    - name: "Projects"
+      url: "/projects/"
       weight: 30
-    - name: "Contact"
-      url: "#contact"
+    - name: "People"
+      url: "/people/"
       weight: 40
+    - name: "Join us"
+      url: "/hiring/"
+      weight: 50
+    - name: "Contact"
+      url: "/contact/"
+      weight: 60
+    - name: "Wiki (internal)"
+      url: "http://wiki.lilab.cool"
+      weight: 70
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true

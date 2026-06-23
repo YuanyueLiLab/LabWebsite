@@ -1,16 +1,24 @@
 <header class="site-header">
   <div class="site-header__inner">
     <a class="brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} home">
-      <span class="brand__mark">YL</span>
-      <span class="brand__text">
-        <strong>{{ site.Params.lab_name }}</strong>
-        <span>{{ site.Params.institution }}</span>
-      </span>
+      {{ with resources.Get "media/logo.png" }}
+        {{ $logo := .Resize "340x webp q90" }}
+        <img class="brand__logo" src="{{ $logo.RelPermalink }}" width="{{ $logo.Width }}" height="{{ $logo.Height }}" alt="{{ site.Title }}">
+      {{ else }}
+        <span class="brand__fallback">
+          <strong>{{ site.Params.lab_name }}</strong>
+          <span>{{ site.Params.lab_name_zh }}</span>
+        </span>
+      {{ end }}
     </a>
 
     <nav class="site-nav" aria-label="Main navigation">
-      {{ range site.Menus.main }}
-        <a href="{{ .URL }}">{{ .Name }}</a>
+      {{ range site.Menus.main.ByWeight }}
+        {{ $isExternal := or (hasPrefix .URL "http://") (hasPrefix .URL "https://") }}
+        {{ $href := cond $isExternal .URL (.URL | relURL) }}
+        {{ $isSectionActive := and (not $isExternal) (ne .URL "/") (hasPrefix $.RelPermalink $href) }}
+        {{ $isActive := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) (and $.IsHome (eq .URL "/")) $isSectionActive }}
+        <a class="{{ if $isActive }}is-active{{ end }}" href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Name }}</a>
       {{ end }}
     </nav>
   </div>

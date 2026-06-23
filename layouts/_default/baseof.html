@@ -6,6 +6,10 @@
   <meta name="color-scheme" content="light">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+  {{ with resources.Get "media/icon.png" }}
+    {{ $icon := .Fill "64x64 Center png" }}
+    <link rel="icon" href="{{ $icon.RelPermalink }}" type="image/png">
+  {{ end }}
   {{ with resources.Get "css/main.css" }}
     {{ $css := . | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">

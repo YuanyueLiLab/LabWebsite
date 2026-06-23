@@ -1,0 +1,42 @@
+{{ define "main" }}
+<article class="profile-page">
+  <header class="page-hero profile-hero">
+    <div class="section__inner profile-hero__inner">
+      {{ with .Resources.GetMatch "avatar.*" }}
+        {{ $avatar := .Fill "420x420 Center webp q84" }}
+        <img class="profile-avatar" src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
+      {{ end }}
+      <div>
+        <p class="eyebrow">{{ index .Params.user_groups 0 }}</p>
+        <h1>{{ .Title }}{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h1>
+        <p class="profile-role">{{ .Params.role }}</p>
+        {{ with .Params.email }}<a class="button button--primary" href="mailto:{{ . }}">{{ . }}</a>{{ end }}
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section__inner profile-grid">
+      <div class="article-content rich-text">
+        {{ .Content }}
+      </div>
+      <aside class="profile-sidebar">
+        {{ with .Params.interests }}
+          <h2>Interests</h2>
+          <ul>
+            {{ range . }}<li>{{ . }}</li>{{ end }}
+          </ul>
+        {{ end }}
+        {{ with .Params.education.courses }}
+          <h2>Education</h2>
+          <ul>
+            {{ range . }}
+              <li><strong>{{ .course }}</strong><span>{{ .institution }}{{ with .year }}, {{ . }}{{ end }}</span></li>
+            {{ end }}
+          </ul>
+        {{ end }}
+      </aside>
+    </div>
+  </section>
+</article>
+{{ end }}

@@ -1,127 +1,168 @@
 {{ define "main" }}
+{{ $hero := resources.Get "media/sky.jpg" }}
+{{ with $hero }}{{ $hero = .Fill "2200x1100 Center webp q82" }}{{ end }}
+{{ $moon := resources.Get "media/earth_from_moon.jpg" }}
+{{ with $moon }}{{ $moon = .Fill "2200x900 Center webp q82" }}{{ end }}
+{{ $research := site.GetPage "/research" }}
+{{ $people := site.GetPage "/people" }}
+{{ $projects := first 4 (where site.RegularPages.ByDate.Reverse "Section" "projects") }}
+{{ $publications := first 4 (where (where site.RegularPages.ByDate.Reverse "Section" "publication") "Params.featured" true) }}
+{{ $news := first 3 (where site.RegularPages.ByDate.Reverse "Section" "news") }}
+{{ $members := sort (where (where site.Pages "Section" "members") "Params.role" "!=" nil) "Params.last_name" }}
 
-<section class="hero" id="home">
-  <img class="hero__image" src="{{ "images/metabolomics-hero.png" | relURL }}" alt="" fetchpriority="high">
-  <div class="hero__content">
-    <p class="eyebrow">Metabolomics · Mass spectrometry · Computation</p>
-    <h1>{{ site.Params.lab_name }}</h1>
-    <p class="hero__copy">
-      We measure small molecules at scale and build computational methods that turn complex
-      mass spectrometry data into biological insight.
-    </p>
-    <div class="hero__actions" aria-label="Primary actions">
-      <a class="button button--primary" href="#research">Explore research</a>
-      <a class="button button--secondary" href="mailto:{{ site.Params.email }}">Contact the lab</a>
+<section class="home-hero"{{ with $hero }} style="--hero-image: url('{{ .RelPermalink }}');"{{ end }}>
+  <div class="home-hero__inner">
+    <div class="home-hero__copy">
+      <h1>👋 Welcome to {{ site.Params.lab_name }}</h1>
+      <p>
+        We are a lab focused on metabolomics, AI, and big data.
+      </p>
+      <div class="button-row">
+        <a class="button button--light" href="{{ "/research/" | relURL }}">🔬 Our research</a>
+        <a class="button button--ghost" href="{{ "/hiring/" | relURL }}">Join us</a>
+      </div>
     </div>
-    <dl class="hero__stats" aria-label="Lab focus areas">
-      <div>
-        <dt>LC-MS/MS</dt>
-        <dd>Analytical workflows</dd>
-      </div>
-      <div>
-        <dt>Annotation</dt>
-        <dd>Spectra to molecules</dd>
-      </div>
-      <div>
-        <dt>Biology</dt>
-        <dd>Interpretable discovery</dd>
-      </div>
-    </dl>
   </div>
 </section>
 
-<section class="section intro-section" aria-label="Lab overview">
-  <div class="section__inner intro-grid">
-    <p class="intro-kicker">A modern metabolomics lab for measurement, computation, and discovery.</p>
-    <p class="intro-text">
-      Our group develops experimental and computational approaches for metabolomics, with an
-      emphasis on robust mass spectrometry, confident molecular interpretation, and collaborative
-      biomedical applications.
-    </p>
+<section class="section section--intro">
+  <div class="section__inner intro-band">
+    <p class="intro-band__lead">Metabolomics methods for unknown molecules, biomedical discovery, and digital analysis of human biology.</p>
+    <div class="intro-band__meta">
+      <span>Mass spectrometry</span>
+      <span>Computational metabolomics</span>
+      <span>AI and big data</span>
+    </div>
   </div>
 </section>
 
-<section class="section" id="research">
+{{ with $research }}
+  <section class="section" id="research">
+    <div class="section__inner">
+      <div class="section-heading">
+        <p class="eyebrow">Research</p>
+        <h2>{{ .Title }}</h2>
+      </div>
+
+      <div class="feature-grid">
+        {{ range first 3 .Params.sections }}
+          <article class="feature-card rich-card">
+            <h3>{{ .content.title }}</h3>
+            <div class="rich-text">
+              {{ .content.text | markdownify }}
+            </div>
+          </article>
+        {{ end }}
+      </div>
+      <div class="section-link">
+        <a href="{{ .RelPermalink }}">Read more about our research</a>
+      </div>
+    </div>
+  </section>
+{{ end }}
+
+<section class="section section--soft">
   <div class="section__inner">
-    <div class="section-heading">
-      <p class="eyebrow">Research</p>
-      <h2>Focused on the molecules that report biological state.</h2>
+    <div class="section-heading section-heading--split">
+      <div>
+        <p class="eyebrow">Projects</p>
+        <h2>Open tools and methods from the lab.</h2>
+      </div>
+      <a class="text-link" href="{{ "/projects/" | relURL }}">All projects</a>
     </div>
 
-    <div class="focus-grid">
-      {{ range $index, $item := hugo.Data.research }}
-        <article class="focus-card">
-          <span class="focus-card__number">{{ printf "%02d" (add $index 1) }}</span>
-          <h3>{{ $item.title }}</h3>
-          <p>{{ $item.text }}</p>
+    <div class="project-grid">
+      {{ range $projects }}
+        {{ $project := . }}
+        <article class="project-card">
+          {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
+            {{ $img := .Fill "720x440 Center webp q82" }}
+            <a class="project-card__image" href="{{ $project.RelPermalink }}">
+              <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="">
+            </a>
+          {{ end }}
+          <div class="project-card__body">
+            <p class="meta">{{ .Date.Format "2006" }}</p>
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            {{ with .Params.summary }}<p>{{ . | markdownify | plainify | truncate 170 }}</p>{{ end }}
+          </div>
         </article>
       {{ end }}
     </div>
   </div>
 </section>
 
-<section class="approach-section" id="approach">
-  <div class="section__inner approach-grid">
+<section class="section">
+  <div class="section__inner two-column">
     <div>
-      <p class="eyebrow eyebrow--light">Approach</p>
-      <h2>From samples to biological interpretation.</h2>
-    </div>
-    <ol class="workflow-list">
-      <li>
-        <strong>Measure</strong>
-        <span>Collect high-quality metabolomics data with reproducible LC-MS/MS workflows.</span>
-      </li>
-      <li>
-        <strong>Annotate</strong>
-        <span>Link spectral signals to candidate molecules, pathways, and chemical families.</span>
-      </li>
-      <li>
-        <strong>Model</strong>
-        <span>Use statistics and machine learning to identify patterns that can be tested biologically.</span>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<section class="section" id="people">
-  <div class="section__inner people-grid">
-    <div class="section-heading">
-      <p class="eyebrow">People</p>
-      <h2>Built for collaborative, data-rich biology.</h2>
+      <div class="section-heading">
+        <p class="eyebrow">Featured publications</p>
+        <h2>Selected papers in metabolomics and mass spectrometry.</h2>
+      </div>
+      <div class="citation-list citation-list--compact">
+        {{ range $publications }}
+          <article class="citation">
+            <time>{{ .Date.Format "2006" }}</time>
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            {{ with .Params.publication }}<p>{{ . | markdownify }}</p>{{ end }}
+          </article>
+        {{ end }}
+      </div>
+      <div class="section-link">
+        <a href="{{ "/publication/" | relURL }}">View all publications</a>
+      </div>
     </div>
 
-    <div class="person-panel">
-      <p class="person-panel__role">{{ hugo.Data.people.pi.role }}</p>
-      <h3>{{ hugo.Data.people.pi.name }}</h3>
-      <p>{{ hugo.Data.people.pi.bio }}</p>
-      <a href="mailto:{{ hugo.Data.people.pi.email }}">{{ hugo.Data.people.pi.email }}</a>
-
-      {{ with hugo.Data.people.members }}
-        <div class="team-list" aria-label="Lab members">
-          {{ range . }}
-            <div>
-              <strong>{{ .name }}</strong>
-              <span>{{ .role }} · {{ .interests }}</span>
-            </div>
-          {{ end }}
-        </div>
+    <aside class="news-panel">
+      <p class="eyebrow">Latest news</p>
+      {{ range $news }}
+        <article>
+          <time>{{ .Date.Format "Jan 2, 2006" }}</time>
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        </article>
       {{ end }}
-    </div>
+      <a class="text-link" href="{{ "/news/" | relURL }}">News archive</a>
+    </aside>
   </div>
 </section>
 
-<section class="contact-section" id="contact">
-  <div class="section__inner contact-grid">
+<section class="section section--dark">
+  <div class="section__inner section-heading--split">
     <div>
-      <p class="eyebrow">Contact</p>
-      <h2>Interested in metabolomics, mass spectrometry, or data-driven biology?</h2>
+      <p class="eyebrow">People</p>
+      <h2>Researchers building experimental and computational metabolomics together.</h2>
     </div>
-    <div class="contact-actions">
-      <p>
-        We welcome conversations with students, collaborators, and researchers interested in
-        building better ways to measure and interpret metabolism.
-      </p>
-      <a class="button button--primary" href="mailto:{{ site.Params.email }}">Email {{ site.Params.pi_name }}</a>
+    <a class="button button--light" href="{{ "/people/" | relURL }}">Meet the team</a>
+  </div>
+
+  <div class="section__inner member-strip">
+    {{ range first 4 $members }}
+      <a class="member-mini" href="{{ .RelPermalink }}">
+        {{ with .Resources.GetMatch "avatar.*" }}
+          {{ $avatar := .Fill "240x240 Center webp q82" }}
+          <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
+        {{ end }}
+        <span>
+          <strong>{{ .Title }}</strong>
+          <small>{{ .Params.role }}</small>
+        </span>
+      </a>
+    {{ end }}
+  </div>
+</section>
+
+<section class="section cta-section"{{ with $moon }} style="--cta-image: url('{{ .RelPermalink }}');"{{ end }}>
+  <div class="section__inner cta-grid">
+    <div>
+      <p class="eyebrow">Join Li Lab</p>
+      <h2>Explore metabolomics at the edge of computation and biology.</h2>
+    </div>
+    <div>
+      <p>We welcome postdoctoral researchers, research assistants, graduate students, and motivated undergraduate interns.</p>
+      <div class="button-row">
+        <a class="button button--primary" href="{{ "/hiring/" | relURL }}">Open positions</a>
+        <a class="button button--secondary" href="mailto:{{ site.Params.hiring_email }}">{{ site.Params.hiring_email }}</a>
+      </div>
     </div>
   </div>
 </section>

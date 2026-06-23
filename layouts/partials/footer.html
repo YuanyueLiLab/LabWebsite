@@ -1,9 +1,12 @@
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <p>© {{ now.Year }} {{ site.Params.lab_name }}. {{ site.Params.institution }}.</p>
-    <p>
-      {{ site.Params.location }} ·
-      <a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a>
-    </p>
+    <div>
+      <strong>{{ site.Params.lab_name }}</strong>
+      <p>{{ site.Params.institution }}</p>
+    </div>
+    <div>
+      <p>© {{ now.Year }} {{ site.Params.lab_name }}. {{ site.Params.location }}</p>
+      <p><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></p>
+    </div>
   </div>
 </footer>
