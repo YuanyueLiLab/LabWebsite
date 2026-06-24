@@ -1,14 +1,14 @@
 {{ define "main" }}
 {{ $slides := slice }}
 {{ $slideInterval := 7000 }}
-{{ range .Params.sections }}
-  {{ if eq .block "slider" }}
-    {{ with .design.interval }}
-      {{ $slideInterval = . }}
-    {{ end }}
-    {{ range .content.slides }}
-      {{ $slides = $slides | append . }}
-    {{ end }}
+{{ with .Params.content }}
+  {{ with .slides }}
+    {{ $slides = . }}
+  {{ end }}
+{{ end }}
+{{ with .Params.design }}
+  {{ with .interval }}
+    {{ $slideInterval = . }}
   {{ end }}
 {{ end }}
 

@@ -1,7 +1,7 @@
 {{ define "main" }}
 <article class="profile-page">
   <header class="page-hero profile-hero">
-    <div class="section__inner profile-hero__inner">
+    <div class="section__inner page-container profile-hero__inner">
       {{ with .Resources.GetMatch "avatar.*" }}
         {{ $avatar := .Fill "420x420 Center webp q84" }}
         <img class="profile-avatar" src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
@@ -16,7 +16,7 @@
   </header>
 
   <section class="section">
-    <div class="section__inner profile-grid">
+    <div class="section__inner page-container profile-grid">
       <div class="article-content rich-text">
         {{ .Content }}
       </div>

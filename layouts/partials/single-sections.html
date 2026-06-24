@@ -1,0 +1,39 @@
+{{ with .Params.sections }}
+  <div class="content-blocks">
+    {{ range $index, $section := . }}
+      {{ if eq $section.block "contact" }}
+        <section class="content-block contact-block">
+          {{ with $section.content.title }}<h2>{{ . }}</h2>{{ end }}
+          {{ with $section.content.email }}
+            <p><strong>Email</strong><br><a href="mailto:{{ . }}">{{ . }}</a></p>
+          {{ end }}
+          {{ with $section.content.address.region }}
+            <p><strong>Address</strong><br>{{ . }}</p>
+          {{ end }}
+          {{ with $section.content.postcode }}
+            <p><strong>Postcode</strong><br>{{ . }}</p>
+          {{ end }}
+          {{ with $section.content.contact_links }}
+            <div class="link-list">
+              {{ range . }}<a href="{{ .link }}">{{ .name }}</a>{{ end }}
+            </div>
+          {{ end }}
+        </section>
+      {{ else if eq $section.block "markdown" }}
+        {{ $label := or $section.content.label $section.content.subtitle }}
+        <section id="page-section-{{ add $index 1 }}" class="page-section page-card">
+          <div class="page-section__heading">
+            {{ with $label }}<p class="page-section__label">{{ . }}</p>{{ end }}
+            {{ with $section.content.title }}<h2>{{ . }}</h2>{{ end }}
+          </div>
+          <div class="page-section__body">
+            {{ with $section.content.image }}
+              <figure class="page-image"><img src="{{ . }}" width="600" height="240" alt=""></figure>
+            {{ end }}
+            <div class="rich-text">{{ $section.content.text | markdownify }}</div>
+          </div>
+        </section>
+      {{ end }}
+    {{ end }}
+  </div>
+{{ end }}

@@ -1,13 +1,13 @@
 {{ define "main" }}
 <header class="page-hero">
-  <div class="section__inner">
-    <p class="eyebrow">{{ .Section | humanize }}</p>
+  <div class="section__inner page-container">
+    <!-- <p class="eyebrow">{{ .Section | humanize }}</p> -->
     <h1>{{ .Title }}</h1>
   </div>
 </header>
 
 <section class="section">
-  <div class="section__inner">
+  <div class="section__inner page-container">
     {{ if eq .Section "publication" }}
       <div class="citation-list">
         {{ range .Pages.ByDate.Reverse }}
@@ -21,20 +21,43 @@
         {{ end }}
       </div>
     {{ else if eq .Section "projects" }}
-      <div class="project-grid">
+      <div class="project-showcase">
         {{ range .Pages.ByDate.Reverse }}
           {{ $page := . }}
-          <article class="project-card">
-            {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
-              {{ $img := .Fill "720x440 Center webp q82" }}
-              <a class="project-card__image" href="{{ $page.RelPermalink }}">
-                <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="">
+          {{ $projectHref := .RelPermalink }}
+          {{ with .Params.external_link }}
+            {{ $projectHref = . }}
+          {{ end }}
+          {{ $isProjectExternal := or (hasPrefix $projectHref "http://") (hasPrefix $projectHref "https://") }}
+          {{ $projectImage := or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
+          <article class="project-card project-card--showcase{{ if not $projectImage }} project-card--no-image{{ end }}">
+            {{ with $projectImage }}
+              {{ $img := .Resize "540x webp q82" }}
+              <a class="project-card__image" href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
+                <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
               </a>
             {{ end }}
             <div class="project-card__body">
-              <p class="meta">{{ .Date.Format "Jan 2006" }}</p>
-              <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-              {{ with .Params.summary }}<p>{{ . | markdownify | plainify | truncate 220 }}</p>{{ end }}
+              <h2><a href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a></h2>
+              {{ with .Params.summary }}
+                <div class="project-card__summary">{{ . | markdownify }}</div>
+              {{ else with .Summary }}
+                <div class="project-card__summary">{{ . }}</div>
+              {{ end }}
+              {{ with .Params.links }}
+                <div class="project-card__links" aria-label="{{ $page.Title }} links">
+                  {{ range . }}
+                    {{ $linkHref := .url }}
+                    {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
+                    {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
+                      {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
+                    {{ else if not $isLinkExternal }}
+                      {{ $linkHref = $linkHref | relURL }}
+                    {{ end }}
+                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>{{ .name }}</a>
+                  {{ end }}
+                </div>
+              {{ end }}
             </div>
           </article>
         {{ end }}

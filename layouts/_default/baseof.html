@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="dark light">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
   {{ with resources.Get "media/icon.png" }}
@@ -15,12 +15,11 @@
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
 </head>
-{{ $isResearch := eq .RelPermalink ("/research/" | relURL) }}
 {{ $bodyClasses := slice }}
 {{ if .IsHome }}
   {{ $bodyClasses = $bodyClasses | append "is-home" }}
 {{ end }}
-{{ if $isResearch }}
+{{ if not .IsHome }}
   {{ $bodyClasses = $bodyClasses | append "is-research" }}
 {{ end }}
 <body{{ with $bodyClasses }} class="{{ delimit . " " }}"{{ end }}>
@@ -29,18 +28,13 @@
   <main id="main">
     {{ block "main" . }}{{ end }}
   </main>
-  {{ if and (not .IsHome) (not $isResearch) }}
-    {{ partial "footer.html" . }}
+  {{ with resources.Get "js/vendor/sky.js" }}
+    {{ $sky := . | minify | fingerprint }}
+    <script src="{{ $sky.RelPermalink }}" integrity="{{ $sky.Data.Integrity }}" crossorigin="anonymous" defer></script>
   {{ end }}
-  {{ if or .IsHome $isResearch }}
-    {{ with resources.Get "js/vendor/sky.js" }}
-      {{ $sky := . | minify | fingerprint }}
-      <script src="{{ $sky.RelPermalink }}" integrity="{{ $sky.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    {{ end }}
-    {{ with resources.Get "js/home-stars.js" }}
-      {{ $stars := . | minify | fingerprint }}
-      <script src="{{ $stars.RelPermalink }}" integrity="{{ $stars.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    {{ end }}
+  {{ with resources.Get "js/home-stars.js" }}
+    {{ $stars := . | minify | fingerprint }}
+    <script src="{{ $stars.RelPermalink }}" integrity="{{ $stars.Data.Integrity }}" crossorigin="anonymous" defer></script>
   {{ end }}
   {{ if .IsHome }}
     {{ with resources.Get "js/home-slides.js" }}
