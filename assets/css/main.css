@@ -23,14 +23,21 @@
 }
 
 html {
+  height: 100%;
   background: var(--bg);
   color: var(--ink);
   color-scheme: dark;
+  overflow: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  height: 100svh;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   color: var(--ink);
   background:
     radial-gradient(circle at 50% 0%, rgba(21, 101, 192, 0.22), transparent 34rem),
@@ -106,7 +113,8 @@ a:hover {
 }
 
 .site-header {
-  position: sticky;
+  position: relative;
+  flex: 0 0 auto;
   top: 0;
   z-index: 50;
   background: transparent;
@@ -272,7 +280,11 @@ body:not(.is-home) .site-nav a.is-active {
 main {
   position: relative;
   z-index: 2;
-  min-height: 72vh;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 html.page-transition-enabled main {
