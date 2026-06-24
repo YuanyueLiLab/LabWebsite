@@ -40,9 +40,12 @@ var Sky = function Sky(layers, density) {
 	document.body.appendChild(sky);
 	document.head.appendChild(style);
 
+	var initialSkySize = getSkySize();
+	var starsScale = getStarsScale( initialSkySize.width, initialSkySize.height );
+
 	for (var i = 0; i < layers; i++ ) {
 		var newLayer = document.createElement("DIV");
-		var starsCount = density * (200*(0.5/(i+1)));
+		var starsCount = Math.round( density * (200*(0.5/(i+1))) * starsScale );
 		var fracComplete = (i+1) / layers;
 		var op = fracComplete + 0.1;
 
@@ -59,6 +62,13 @@ var Sky = function Sky(layers, density) {
 
 	function clamp( value, min, max ) {
 		return Math.max( min, Math.min( value, max ) );
+	}
+
+	function getStarsScale( width, height ) {
+		var referenceArea = 1440 * 900;
+		var pageArea = Math.max( width, 1 ) * Math.max( height, 1 );
+
+		return clamp( pageArea / referenceArea, 0.25, 2.5 );
 	}
 
 	function getSkySize() {
@@ -144,10 +154,23 @@ var Sky = function Sky(layers, density) {
 				star.style.backgroundColor = red;
 			}
 
-			if ( i%60 == 0 && layer.className.indexOf("0") > -1 ) {
+			if ( i%50 == 0 && layer.className.indexOf("0") > -1 ) {
 				var whichGal = Math.ceil(6 * Math.random());
 				var rotate = Math.floor(180 * Math.random());
-				star.innerHTML = "<img src='" + galaxyBasePath + "galaxy" + whichGal + ".png' alt='' width='20' />";
+				var galaxyImg = document.createElement("IMG");
+
+				galaxyImg.src = galaxyBasePath + "galaxy" + whichGal + ".png";
+				galaxyImg.alt = "";
+				galaxyImg.width = 20;
+				galaxyImg.height = 20;
+				galaxyImg.decoding = "async";
+
+				star.style.width = "20px";
+				star.style.height = "20px";
+				star.style.backgroundColor = "transparent";
+				star.style.boxShadow = "none";
+				star.style.borderRadius = "0";
+				star.appendChild( galaxyImg );
 				star.style.WebkitTransform = "rotate(" + rotate + "deg)";
 				star.style.MozTransform = "rotate(" + rotate + "deg)";
 				star.style.MsTransform = "rotate(" + rotate + "deg)";

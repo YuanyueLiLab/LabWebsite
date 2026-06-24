@@ -11,7 +11,7 @@
     existingSky.remove();
   }
 
-  var sky = new window.Sky(4, 8);
+  var sky = new window.Sky(4, 6);
   var skyNode = document.getElementById("sky");
 
   if (!skyNode) {
