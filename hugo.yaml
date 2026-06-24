@@ -42,3 +42,7 @@ menus:
     - name: "Wiki (internal)"
       url: "http://wiki.lilab.cool"
       weight: 70
+
+services:
+  googleAnalytics:
+    id: "G-V7RYYW6LE8"

@@ -1,16 +1,6 @@
 {{ define "main" }}
-{{ $slides := slice }}
-{{ $slideInterval := 7000 }}
-{{ with .Params.content }}
-  {{ with .slides }}
-    {{ $slides = . }}
-  {{ end }}
-{{ end }}
-{{ with .Params.design }}
-  {{ with .interval }}
-    {{ $slideInterval = . }}
-  {{ end }}
-{{ end }}
+{{ $slides := default (slice) .Params.content.slides }}
+{{ $slideInterval := default 7000 .Params.design.interval }}
 
 <section class="home-hero">
   <div class="sky-stars" aria-hidden="true"></div>
@@ -51,7 +41,7 @@
           <div class="home-slider__controls" aria-label="Slide controls">
             <button class="home-slider__arrow" type="button" data-slide-prev aria-label="Previous slide">{{ partial "fontawesome-icon.html" (dict "icon" "chevron-left") }}</button>
             <div class="home-slider__dots">
-              {{ range $index, $slide := $slides }}
+              {{ range $index, $_ := $slides }}
                 <button class="home-slider__dot{{ if eq $index 0 }} is-active{{ end }}" type="button" data-slide-dot="{{ $index }}" aria-label="Show slide {{ add $index 1 }}"{{ if eq $index 0 }} aria-current="true"{{ end }}></button>
               {{ end }}
             </div>
