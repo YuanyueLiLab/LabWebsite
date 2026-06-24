@@ -275,6 +275,22 @@ main {
   min-height: 72vh;
 }
 
+html.page-transition-enabled main {
+  transition:
+    opacity 520ms ease,
+    transform 520ms ease,
+    visibility 520ms ease;
+  will-change: opacity, transform;
+}
+
+html.page-transition-enabled.is-page-entering main,
+html.page-transition-enabled.is-page-leaving main {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(18px);
+}
+
 .site-stars {
   position: fixed;
   opacity: 0.44;
@@ -2285,7 +2301,7 @@ time {
   }
 
   .brand__text {
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
 
   .home-hero {
@@ -2872,7 +2888,7 @@ time {
   }
 
   .brand__text {
-    font-size: 0.84rem;
+    font-size: 0.95rem;
   }
 
   .site-nav-toggle {

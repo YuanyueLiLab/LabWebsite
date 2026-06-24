@@ -6,6 +6,18 @@
   <meta name="color-scheme" content="dark light">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      try {
+        if (!reduceMotion && window.sessionStorage.getItem("li-lab-page-transition") === "true") {
+          root.classList.add("page-transition-enabled", "is-page-entering");
+        }
+      } catch (error) {}
+    })();
+  </script>
   {{ with resources.Get "media/icon.png" }}
     {{ $icon := .Fill "64x64 Center png" }}
     <link rel="icon" href="{{ $icon.RelPermalink }}" type="image/png">
