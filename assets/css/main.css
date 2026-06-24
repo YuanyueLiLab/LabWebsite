@@ -109,10 +109,10 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.88);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(14px);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .section__inner,
@@ -233,10 +233,10 @@ a:hover {
 
 body.is-home .site-header,
 body:not(.is-home) .site-header {
-  background: rgba(0, 0, 0, 0.9);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(14px);
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 /* body.is-home .brand__logo,
@@ -311,11 +311,11 @@ html.page-transition-enabled.is-page-leaving main {
   overflow: hidden;
   color: white;
   text-align: center;
-  background: #000;
+  background: transparent;
 }
 
 .sky-stars {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
@@ -1247,9 +1247,7 @@ time {
   min-height: calc(100svh - 70px);
   overflow: hidden;
   color: white;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(21, 101, 192, 0.24), transparent 34rem),
-    linear-gradient(180deg, #000 0%, #05070d 50%, #000 100%);
+  background: transparent;
 }
 
 .page__content {
@@ -1890,10 +1888,7 @@ time {
 }
 
 .people-profile-page {
-  background:
-    radial-gradient(circle at 12% 12%, rgba(142, 219, 212, 0.16), transparent 24rem),
-    radial-gradient(circle at 82% 2%, rgba(217, 178, 111, 0.12), transparent 22rem),
-    linear-gradient(180deg, #000 0%, #05070d 44%, #000 100%);
+  background: transparent;
 }
 
 .people-profile-page .page__content {

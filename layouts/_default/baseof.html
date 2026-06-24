@@ -38,6 +38,7 @@
 {{ end }}
 <body{{ with $bodyClasses }} class="{{ delimit . " " }}"{{ end }}>
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="sky-stars" aria-hidden="true"></div>
   {{ partial "header.html" . }}
   <main id="main">
     {{ block "main" . }}{{ end }}

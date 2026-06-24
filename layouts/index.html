@@ -3,7 +3,6 @@
 {{ $slideInterval := default 7000 .Params.design.interval }}
 
 <section class="home-hero">
-  <div class="sky-stars" aria-hidden="true"></div>
   <div class="home-hero__inner">
     {{ if gt (len $slides) 0 }}
       <div class="home-slider" data-home-slides data-slider-interval="{{ $slideInterval }}">
