@@ -2,9 +2,6 @@
 title: MSViewer
 summary: '**MSViewer** is a tool to visualize spectra, calculate spectral similarity in real time. <br />
 '
-tags:
-  - Spectral entropy
-  - MSViewer
 date: '2025-03-14T00:00:00Z'
 
 # Optional external URL for project (replaces project detail page).

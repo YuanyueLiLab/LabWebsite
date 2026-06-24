@@ -18,49 +18,50 @@
           {{ $isProjectExternal := or (hasPrefix $projectHref "http://") (hasPrefix $projectHref "https://") }}
           {{ $projectLink := cond $isProjectExternal $projectHref ($projectHref | relURL) }}
           {{ $projectImage := or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
-          {{ $label := "Project" }}
+          {{ $label := "" }}
           {{ with .Params.tags }}
             {{ $label = index . 0 }}
           {{ end }}
 
-          <section class="page-section page-card project-page-card">
-            <div class="page-section__heading">
-              <p class="page-section__label">{{ $label }}</p>
-              <h2>
-                <a href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a>
-              </h2>
-            </div>
-            <div class="page-section__body">
-              {{ with $projectImage }}
-                {{ $img := .Resize "900x webp q82" }}
-                <a class="page-image project-page-card__image" href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
-                  <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
-                </a>
-              {{ end }}
+          <section class="page-section page-card project-page-card{{ if not $projectImage }} project-page-card--no-image{{ end }}">
+            {{ with $projectImage }}
+              <a class="page-image project-page-card__image" href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
+                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $page.Title }}">
+              </a>
+            {{ end }}
 
-              {{ with .Params.summary }}
-                <div class="rich-text">{{ . | markdownify }}</div>
-              {{ else with .Summary }}
-                <div class="rich-text">{{ . }}</div>
-              {{ end }}
+            <div class="project-page-card__content">
+              <div class="page-section__heading">
+                <p class="page-section__label">{{ $label }}</p>
+                <h2>
+                  <a href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a>
+                </h2>
+              </div>
+              <div class="page-section__body">
+                {{ with .Params.summary }}
+                  <div class="rich-text">{{ . | markdownify }}</div>
+                {{ else with .Summary }}
+                  <div class="rich-text">{{ . }}</div>
+                {{ end }}
 
-              {{ with .Params.links }}
-                <div class="project-card__links project-page-card__links" aria-label="{{ $page.Title }} links">
-                  {{ range . }}
-                    {{ $linkHref := .url }}
-                    {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
-                    {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
-                      {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
-                    {{ else if not $isLinkExternal }}
-                      {{ $linkHref = $linkHref | relURL }}
+                {{ with .Params.links }}
+                  <div class="project-card__links project-page-card__links" aria-label="{{ $page.Title }} links">
+                    {{ range . }}
+                      {{ $linkHref := .url }}
+                      {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
+                      {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
+                        {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
+                      {{ else if not $isLinkExternal }}
+                        {{ $linkHref = $linkHref | relURL }}
+                      {{ end }}
+                      <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
+                        {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
+                        <span>{{ .name }}</span>
+                      </a>
                     {{ end }}
-                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
-                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
-                      <span>{{ .name }}</span>
-                    </a>
-                  {{ end }}
-                </div>
-              {{ end }}
+                  </div>
+                {{ end }}
+              </div>
             </div>
           </section>
         {{ end }}

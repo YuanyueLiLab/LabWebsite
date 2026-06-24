@@ -1,47 +1,111 @@
 {{ define "main" }}
-<article class="page profile-page">
+{{ $email := .Params.email }}
+<article class="page profile-page people-profile-page">
   <div class="sky-stars page-stars" aria-hidden="true"></div>
   <div class="page__content">
-    <div class="page-container page-title">
-      <h1>{{ .Title }}</h1>
-      {{ with .Params.role }}<p>{{ . }}</p>{{ end }}
-    </div>
+    <header class="profile-hero">
+      <div class="page-container profile-hero__inner">
+        <div class="profile-hero__copy">
+          {{ with .Params.user_groups }}<p class="profile-kicker">{{ delimit . " / " }}</p>{{ end }}
+          <h1>{{ .Title }}{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h1>
+          {{ with .Params.role }}<p class="profile-role profile-hero__role">{{ . }}</p>{{ end }}
+          {{ with .Params.bio }}<p class="profile-hero__summary">{{ . }}</p>{{ end }}
 
-    <div class="page-container page-body__inner">
-      <div class="profile-blocks">
-        <section class="page-section page-card profile-overview">
-          {{ with .Resources.GetMatch "avatar.*" }}
-            {{ $avatar := .Fill "420x420 Center webp q84" }}
-            <img class="profile-overview__avatar" src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="{{ $.Title }}">
+          {{ if or .Params.user_groups $email }}
+            <div class="profile-hero__meta" aria-label="{{ .Title }} profile summary">
+              {{ with .Params.user_groups }}
+                <span>
+                  {{ partial "fontawesome-icon.html" (dict "icon" "users") }}
+                  <span>{{ delimit . ", " }}</span>
+                </span>
+              {{ end }}
+              {{ with $email }}
+                <a href="mailto:{{ . }}">
+                  {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+                  <span>{{ . }}</span>
+                </a>
+              {{ end }}
+            </div>
           {{ end }}
-          <div class="profile-overview__content">
-            {{ with .Params.user_groups }}<p class="page-section__label">{{ index . 0 }}</p>{{ end }}
-            <h2>{{ .Title }}{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h2>
-            {{ with .Params.role }}<p class="profile-role">{{ . }}</p>{{ end }}
 
-            {{ $email := .Params.email }}
-            {{ if or .Params.social $email }}
-              <div class="social-links profile-social" aria-label="{{ .Title }} links">
-                {{ with .Params.social }}
-                  {{ range . }}
-                    {{ $href := .link }}
-                    {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
-                    <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
-                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
-                    </a>
-                  {{ end }}
-                {{ else with $email }}
-                  <a href="mailto:{{ . }}" aria-label="Email {{ $.Title }}">
-                    {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+          {{ if or .Params.social $email }}
+            <div class="social-links profile-hero__links" aria-label="{{ .Title }} links">
+              {{ with .Params.social }}
+                {{ range . }}
+                  {{ $href := .link }}
+                  {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                  <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
+                    {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
                   </a>
                 {{ end }}
-              </div>
-            {{ end }}
-          </div>
-        </section>
+              {{ else with $email }}
+                <a href="mailto:{{ . }}" aria-label="Email {{ $.Title }}">
+                  {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+                </a>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
 
-        {{ with .Content }}
-          <section class="page-section page-card profile-section">
+        <div class="profile-hero__visual">
+          {{ with .Resources.GetMatch "avatar.*" }}
+            {{ $avatar := .Fit "420x420 webp q88" }}
+            <img class="profile-portrait" src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="{{ $.Title }}">
+          {{ else }}
+            <div class="profile-portrait profile-portrait--placeholder" aria-hidden="true">{{ substr $.Title 0 1 }}</div>
+          {{ end }}
+        </div>
+      </div>
+    </header>
+
+    <div class="page-container profile-content-layout">
+      {{ if or .Params.interests .Params.education.courses .Params.user_groups $email }}
+        <aside class="profile-side" aria-label="{{ .Title }} details">
+          {{ if or .Params.user_groups $email }}
+            <section class="profile-panel">
+              <h2>Snapshot</h2>
+              <dl class="profile-snapshot">
+                {{ with .Params.user_groups }}
+                  <div>
+                    <dt>Group</dt>
+                    <dd>{{ delimit . ", " }}</dd>
+                  </div>
+                {{ end }}
+                {{ with $email }}
+                  <div>
+                    <dt>Email</dt>
+                    <dd><a href="mailto:{{ . }}">{{ . }}</a></dd>
+                  </div>
+                {{ end }}
+              </dl>
+            </section>
+          {{ end }}
+
+          {{ with .Params.interests }}
+            <section class="profile-panel">
+              <h2>Interests</h2>
+              <ul class="profile-topic-list">
+                {{ range . }}<li>{{ . }}</li>{{ end }}
+              </ul>
+            </section>
+          {{ end }}
+
+          {{ with .Params.education.courses }}
+            <section class="profile-panel">
+              <h2>Education</h2>
+              <ul class="profile-education-list">
+                {{ range . }}
+                  <li><strong>{{ .course }}</strong><span>{{ .institution }}{{ with .year }}, {{ . }}{{ end }}</span></li>
+                {{ end }}
+              </ul>
+            </section>
+          {{ end }}
+        </aside>
+      {{ end }}
+
+      {{ with .Content }}
+        <div class="profile-story">
+          <section class="profile-section profile-section--bio">
             <div class="page-section__heading">
               <p class="page-section__label">Biography</p>
               <h2>About</h2>
@@ -50,37 +114,8 @@
               <div class="rich-text profile-bio">{{ . }}</div>
             </div>
           </section>
-        {{ end }}
-
-        {{ if or .Params.interests .Params.education.courses }}
-          <section class="page-section page-card profile-section">
-            <div class="page-section__heading">
-              <p class="page-section__label">Profile</p>
-              <h2>Interests & Education</h2>
-            </div>
-            <div class="page-section__body profile-details">
-              {{ with .Params.interests }}
-                <div class="profile-detail">
-                  <h3>Interests</h3>
-                  <ul class="profile-detail-list profile-detail-list--tags">
-                    {{ range . }}<li>{{ . }}</li>{{ end }}
-                  </ul>
-                </div>
-              {{ end }}
-              {{ with .Params.education.courses }}
-                <div class="profile-detail">
-                  <h3>Education</h3>
-                  <ul class="profile-detail-list">
-                    {{ range . }}
-                      <li><strong>{{ .course }}</strong><span>{{ .institution }}{{ with .year }}, {{ . }}{{ end }}</span></li>
-                    {{ end }}
-                  </ul>
-                </div>
-              {{ end }}
-            </div>
-          </section>
-        {{ end }}
-      </div>
+        </div>
+      {{ end }}
     </div>
   </div>
 </article>

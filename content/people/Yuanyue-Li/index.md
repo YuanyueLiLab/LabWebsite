@@ -14,7 +14,7 @@ superuser: true
 role: ZJU 100 Young Professor
 
 # Short bio (displayed in user profile at end of posts)
-bio: I develop methods for metabolomics.
+# bio: I develop methods for metabolomics.
 
 interests:
   - Mass Spectrometry
