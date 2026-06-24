@@ -1,7 +1,7 @@
 baseURL: "https://lilab.cool/"
 title: "Yuanyue Li Lab - 李渊越实验室"
 locale: "en-us"
-cacheDir: "/x1/github/LabWebsite/resources/_cache"
+# cacheDir: "/x1/github/LabWebsite/resources/_cache"
 disableKinds:
   - "taxonomy"
   - "term"
