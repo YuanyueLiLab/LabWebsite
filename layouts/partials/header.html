@@ -1,4 +1,4 @@
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="site-header__inner">
     <a class="brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} home">
       {{ with resources.Get "media/logo.png" }}
@@ -12,7 +12,13 @@
       {{ end }}
     </a>
 
-    <nav class="site-nav" aria-label="Main navigation">
+    <button class="site-nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-nav-toggle>
+      <span class="site-nav-toggle__icon site-nav-toggle__icon--open">{{ partial "fontawesome-icon.html" (dict "icon" "bars") }}</span>
+      <span class="site-nav-toggle__icon site-nav-toggle__icon--close">{{ partial "fontawesome-icon.html" (dict "icon" "xmark") }}</span>
+      <span>Menu</span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main navigation" data-site-nav>
       {{ range site.Menus.main.ByWeight }}
         {{ $isExternal := or (hasPrefix .URL "http://") (hasPrefix .URL "https://") }}
         {{ $href := cond $isExternal .URL (.URL | relURL) }}
