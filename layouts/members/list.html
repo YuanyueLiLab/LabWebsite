@@ -10,7 +10,28 @@
         <p class="eyebrow">{{ index .Params.user_groups 0 }}</p>
         <h1>{{ .Title }}{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h1>
         <p class="profile-role">{{ .Params.role }}</p>
-        {{ with .Params.email }}<a class="button button--primary" href="mailto:{{ . }}">{{ . }}</a>{{ end }}
+        <div class="profile-actions">
+          {{ $email := .Params.email }}
+          {{ with .Params.email }}
+            <a class="button button--primary" href="mailto:{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+              <span>{{ . }}</span>
+            </a>
+          {{ end }}
+          {{ with .Params.social }}
+            <div class="social-links social-links--profile" aria-label="{{ $.Title }} links">
+              {{ range . }}
+                {{ $href := .link }}
+                {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                {{ if not (and $email (hasPrefix $href "mailto:")) }}
+                  <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
+                    {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
+                  </a>
+                {{ end }}
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
       </div>
     </div>
   </header>

@@ -1,0 +1,66 @@
+{{- $icon := lower (default "" .icon) -}}
+{{- $pack := lower (default "fas" (or .pack .icon_pack)) -}}
+{{- $name := lower (default "" .name) -}}
+{{- $url := lower (default "" .url) -}}
+{{- $extraClass := default "" .class -}}
+
+{{- if not $icon -}}
+  {{- if or (in $name "github") (in $url "github.com") -}}
+    {{- $icon = "github" -}}
+    {{- $pack = "fab" -}}
+  {{- else if or (in $name "twitter") (in $url "twitter.com") (in $url "x.com") -}}
+    {{- $icon = "twitter" -}}
+    {{- $pack = "fab" -}}
+  {{- else if or (in $name "orcid") (in $url "orcid.org") -}}
+    {{- $icon = "orcid" -}}
+    {{- $pack = "fab" -}}
+  {{- else if or (in $name "pdf") (in $url ".pdf") -}}
+    {{- $icon = "file-pdf" -}}
+    {{- $pack = "fas" -}}
+  {{- else if in $name "poster" -}}
+    {{- $icon = "file-image" -}}
+    {{- $pack = "fas" -}}
+  {{- else if or (in $name "slide") (in $name "presentation") -}}
+    {{- $icon = "file-powerpoint" -}}
+    {{- $pack = "fas" -}}
+  {{- else if or (in $name "video") (in $url "youtu") (in $url "video") -}}
+    {{- $icon = "video" -}}
+    {{- $pack = "fas" -}}
+  {{- else if or (in $name "doi") (in $url "doi.org") -}}
+    {{- $icon = "link" -}}
+    {{- $pack = "fas" -}}
+  {{- else if or (in $name "email") (hasPrefix $url "mailto:") -}}
+    {{- $icon = "envelope" -}}
+    {{- $pack = "fas" -}}
+  {{- else -}}
+    {{- $icon = "link" -}}
+    {{- $pack = "fas" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if eq $pack "ai" -}}
+  {{- if eq $icon "google-scholar" -}}
+    {{- $icon = "graduation-cap" -}}
+  {{- else if eq $icon "cv" -}}
+    {{- $icon = "file-lines" -}}
+  {{- end -}}
+  {{- $pack = "fas" -}}
+{{- end -}}
+
+{{- $styles := dict
+  "fa" "fa-solid"
+  "fas" "fa-solid"
+  "solid" "fa-solid"
+  "fa-solid" "fa-solid"
+  "far" "fa-regular"
+  "regular" "fa-regular"
+  "fa-regular" "fa-regular"
+  "fab" "fa-brands"
+  "brands" "fa-brands"
+  "fa-brands" "fa-brands"
+-}}
+{{- $style := default "fa-solid" (index $styles $pack) -}}
+
+{{- if $icon -}}
+  <span class="fa-icon{{ with $extraClass }} {{ . }}{{ end }}" aria-hidden="true"><i class="{{ $style }} fa-{{ $icon }} fa-fw"></i></span>
+{{- end -}}

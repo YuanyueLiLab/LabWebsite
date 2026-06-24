@@ -1,10 +1,8 @@
 {{ define "main" }}
 {{ $members := sort (where (where site.Pages "Section" "members") "Params.role" "!=" nil) "Params.last_name" }}
-<header class="page-hero">
-  <div class="section__inner page-container">
-    <p class="eyebrow">People</p>
-    <h1>{{ .Title }}</h1>
-  </div>
+<header class="page-container page-title">
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
 </header>
 <section class="section">
   <div class="section__inner page-container people-list">
@@ -22,7 +20,26 @@
           <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h2>
           <p class="person-role">{{ .Params.role }}</p>
           {{ with .Summary }}<p>{{ . | plainify | truncate 220 }}</p>{{ end }}
-          {{ with .Params.email }}<a class="text-link" href="mailto:{{ . }}">{{ . }}</a>{{ end }}
+          {{ $email := .Params.email }}
+          {{ with .Params.email }}
+            <a class="text-link" href="mailto:{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+              <span>{{ . }}</span>
+            </a>
+          {{ end }}
+          {{ with .Params.social }}
+            <div class="social-links" aria-label="{{ $member.Title }} links">
+              {{ range . }}
+                {{ $href := .link }}
+                {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                {{ if not (and $email (hasPrefix $href "mailto:")) }}
+                  <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
+                    {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
+                  </a>
+                {{ end }}
+              {{ end }}
+            </div>
+          {{ end }}
         </div>
       </article>
     {{ end }}

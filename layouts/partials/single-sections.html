@@ -1,21 +1,42 @@
-{{ with .Params.sections }}
+{{ $page := . }}
+{{ $sections := .Params.sections }}
+{{ $cards := .Params.content.cards }}
+{{ $sectionOffset := 0 }}
+{{ with $sections }}
+  {{ $sectionOffset = len . }}
+{{ end }}
+{{ if or $sections $cards }}
   <div class="content-blocks">
-    {{ range $index, $section := . }}
+    {{ range $index, $section := $sections }}
       {{ if eq $section.block "contact" }}
         <section class="content-block contact-block">
           {{ with $section.content.title }}<h2>{{ . }}</h2>{{ end }}
           {{ with $section.content.email }}
-            <p><strong>Email</strong><br><a href="mailto:{{ . }}">{{ . }}</a></p>
+            <p class="contact-detail">
+              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
+              <a href="mailto:{{ . }}">{{ . }}</a>
+            </p>
           {{ end }}
           {{ with $section.content.address.region }}
-            <p><strong>Address</strong><br>{{ . }}</p>
+            <p class="contact-detail">
+              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
+              <span>{{ . }}</span>
+            </p>
           {{ end }}
           {{ with $section.content.postcode }}
-            <p><strong>Postcode</strong><br>{{ . }}</p>
+            <p class="contact-detail">
+              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "signs-post") }}<strong>Postcode</strong></span>
+              <span>{{ . }}</span>
+            </p>
           {{ end }}
           {{ with $section.content.contact_links }}
             <div class="link-list">
-              {{ range . }}<a href="{{ .link }}">{{ .name }}</a>{{ end }}
+              {{ range . }}
+                <a href="{{ .link }}">
+                  {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .link) }}
+                  <span>{{ .name }}</span>
+                </a>
+              {{ end }}
             </div>
           {{ end }}
         </section>
@@ -28,12 +49,152 @@
           </div>
           <div class="page-section__body">
             {{ with $section.content.image }}
-              <figure class="page-image"><img src="{{ . }}" width="600" height="240" alt=""></figure>
+              {{ $image := $page.Resources.GetMatch . }}
+              <figure class="page-image">
+                {{ with $image }}
+                  <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
+                {{ else }}
+                  <img src="{{ . }}" width="600" height="240" alt="">
+                {{ end }}
+              </figure>
             {{ end }}
             <div class="rich-text">{{ $section.content.text | markdownify }}</div>
           </div>
         </section>
+      {{ else if eq $section.block "people" }}
+        {{ $peopleContent := default (dict) $section.content }}
+        {{ $peopleDesign := default (dict) $section.design }}
+        {{ $members := where (where site.Pages "Section" "members") "Params.role" "!=" nil }}
+        {{ with $peopleContent.user_groups }}
+          {{ $members = where $members "Params.user_groups" "intersect" . }}
+        {{ end }}
+        {{ $sortBy := default "Params.last_name" $peopleContent.sort_by }}
+        {{ $sortAscending := true }}
+        {{ if isset $peopleContent "sort_ascending" }}
+          {{ $sortAscending = $peopleContent.sort_ascending }}
+        {{ end }}
+        {{ $sortOrder := cond $sortAscending "asc" "desc" }}
+        {{ $members = sort $members $sortBy $sortOrder }}
+        {{ $showRole := true }}
+        {{ if isset $peopleDesign "show_role" }}
+          {{ $showRole = $peopleDesign.show_role }}
+        {{ end }}
+        {{ $showSocial := false }}
+        {{ if isset $peopleDesign "show_social" }}
+          {{ $showSocial = $peopleDesign.show_social }}
+        {{ end }}
+        <section id="page-section-{{ add $index 1 }}" class="people-block">
+          {{ with $peopleContent.title }}
+            <div class="page-section__heading">
+              <h2>{{ . }}</h2>
+            </div>
+          {{ end }}
+          <div class="people-list">
+            {{ range $members }}
+              {{ $member := . }}
+              <article class="person-card">
+                {{ with .Resources.GetMatch "avatar.*" }}
+                  {{ $avatar := .Fill "360x360 Center webp q82" }}
+                  <a class="person-card__avatar" href="{{ $member.RelPermalink }}">
+                    <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
+                  </a>
+                {{ end }}
+                <div class="person-card__body">
+                  <p class="meta">{{ index .Params.user_groups 0 }}</p>
+                  <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h2>
+                  {{ if and $showRole .Params.role }}<p class="person-role">{{ .Params.role }}</p>{{ end }}
+                  {{ with .Summary }}<p>{{ . | plainify | truncate 220 }}</p>{{ end }}
+                  {{ $email := .Params.email }}
+                  {{ with .Params.email }}
+                    <a class="text-link" href="mailto:{{ . }}">
+                      {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+                      <span>{{ . }}</span>
+                    </a>
+                  {{ end }}
+                  {{ if $showSocial }}
+                    {{ with .Params.social }}
+                      <div class="social-links" aria-label="{{ $member.Title }} links">
+                        {{ range . }}
+                          {{ $href := .link }}
+                          {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                          {{ if not (and $email (hasPrefix $href "mailto:")) }}
+                            <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
+                              {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
+                            </a>
+                          {{ end }}
+                        {{ end }}
+                      </div>
+                    {{ end }}
+                  {{ end }}
+                </div>
+              </article>
+            {{ end }}
+          </div>
+        </section>
       {{ end }}
+    {{ end }}
+    {{ range $index, $card := $cards }}
+      {{ $label := or $card.label $card.subtitle }}
+      {{ $sectionID := add (add $sectionOffset $index) 1 }}
+      <section id="page-section-{{ $sectionID }}" class="page-section page-card">
+        {{ if or $label $card.title }}
+          <div class="page-section__heading">
+            {{ with $label }}<p class="page-section__label">{{ . }}</p>{{ end }}
+            {{ with $card.title }}<h2>{{ . }}</h2>{{ end }}
+          </div>
+        {{ end }}
+        <div class="page-section__body">
+          {{ with $card.image }}
+            {{ $image := $page.Resources.GetMatch . }}
+            <figure class="page-image">
+              {{ with $image }}
+                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
+              {{ else }}
+                <img src="{{ . }}" width="600" height="240" alt="">
+              {{ end }}
+            </figure>
+          {{ end }}
+          <div class="rich-text">
+            {{ with $card.text }}{{ . | markdownify }}{{ end }}
+            {{ with $card.email }}
+              <p class="contact-detail">
+                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
+                <a href="mailto:{{ . }}">{{ . }}</a>
+              </p>
+            {{ end }}
+            {{ with $card.address.region }}
+              <p class="contact-detail">
+                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
+                <span>{{ . }}</span>
+              </p>
+            {{ end }}
+            {{ with $card.postcode }}
+              <p class="contact-detail">
+                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "signs-post") }}<strong>Postcode</strong></span>
+                <span>{{ . }}</span>
+              </p>
+            {{ end }}
+            {{ with $card.coordinates }}
+              {{ if and .latitude .longitude }}
+                <p class="contact-detail">
+                  <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-crosshairs") }}<strong>Coordinates</strong></span>
+                  <span>{{ .latitude }}&deg; N, {{ .longitude }}&deg; E</span>
+                </p>
+              {{ end }}
+            {{ end }}
+            {{ with $card.contact_links }}
+              <div class="link-list">
+                {{ range . }}
+                  <a href="{{ .link }}">
+                    {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .link) }}
+                    <span>{{ .name }}</span>
+                  </a>
+                {{ end }}
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      </section>
     {{ end }}
   </div>
 {{ end }}

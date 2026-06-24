@@ -22,7 +22,12 @@
             {{ $isActive := eq $index 0 }}
             <article class="home-slide{{ if $isActive }} is-active{{ end }}" data-home-slide aria-hidden="{{ cond $isActive "false" "true" }}">
               <div class="home-slide__content{{ with $slide.align }} home-slide__content--{{ . }}{{ end }}">
-                {{ with $slide.title }}<h1>{{ . | markdownify }}</h1>{{ end }}
+                {{ with $slide.title }}
+                  <h1>
+                    {{ with $slide.icon }}{{ partial "fontawesome-icon.html" (dict "icon" . "pack" $slide.icon_pack "class" "home-slide__title-icon") }}{{ end }}
+                    <span>{{ . | markdownify }}</span>
+                  </h1>
+                {{ end }}
                 {{ with $slide.content }}<p>{{ . | markdownify }}</p>{{ end }}
                 {{ with $slide.link }}
                   {{ $href := .url }}
@@ -31,7 +36,10 @@
                   {{ end }}
                   {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
                   <div class="button-row">
-                    <a class="button button--light" href="{{ cond $isExternal $href ($href | relURL) }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>{{ .text }}</a>
+                    <a class="button button--light" href="{{ cond $isExternal $href ($href | relURL) }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>
+                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .text "url" $href) }}
+                      <span>{{ .text }}</span>
+                    </a>
                   </div>
                 {{ end }}
               </div>
@@ -41,13 +49,13 @@
 
         {{ if gt (len $slides) 1 }}
           <div class="home-slider__controls" aria-label="Slide controls">
-            <button class="home-slider__arrow" type="button" data-slide-prev aria-label="Previous slide">‹</button>
+            <button class="home-slider__arrow" type="button" data-slide-prev aria-label="Previous slide">{{ partial "fontawesome-icon.html" (dict "icon" "chevron-left") }}</button>
             <div class="home-slider__dots">
               {{ range $index, $slide := $slides }}
                 <button class="home-slider__dot{{ if eq $index 0 }} is-active{{ end }}" type="button" data-slide-dot="{{ $index }}" aria-label="Show slide {{ add $index 1 }}"{{ if eq $index 0 }} aria-current="true"{{ end }}></button>
               {{ end }}
             </div>
-            <button class="home-slider__arrow" type="button" data-slide-next aria-label="Next slide">›</button>
+            <button class="home-slider__arrow" type="button" data-slide-next aria-label="Next slide">{{ partial "fontawesome-icon.html" (dict "icon" "chevron-right") }}</button>
           </div>
         {{ end }}
       </div>

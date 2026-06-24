@@ -6,7 +6,12 @@
     </div>
     <div>
       <p>© {{ now.Year }} {{ site.Params.lab_name }}. {{ site.Params.location }}</p>
-      <p><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></p>
+      <p>
+        <a class="footer-email" href="mailto:{{ site.Params.email }}">
+          {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
+          <span>{{ site.Params.email }}</span>
+        </a>
+      </p>
     </div>
   </div>
 </footer>

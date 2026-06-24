@@ -21,13 +21,48 @@
 
       {{ if or .Params.links .Params.doi .Params.external_link .Params.url_pdf .Params.url_poster .Params.url_slides .Params.url_video }}
         <div class="resource-links">
-          {{ with .Params.external_link }}<a href="{{ . }}">Project page</a>{{ end }}
-          {{ with .Params.doi }}<a href="https://doi.org/{{ . }}">DOI</a>{{ end }}
-          {{ with .Params.url_pdf }}<a href="{{ . }}">PDF</a>{{ end }}
-          {{ with .Params.url_poster }}<a href="{{ . }}">Poster</a>{{ end }}
-          {{ with .Params.url_slides }}<a href="{{ . }}">Slides</a>{{ end }}
-          {{ with .Params.url_video }}<a href="{{ . }}">Video</a>{{ end }}
-          {{ range .Params.links }}<a href="{{ .url }}">{{ .name }}</a>{{ end }}
+          {{ with .Params.external_link }}
+            <a href="{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "up-right-from-square") }}
+              <span>Project page</span>
+            </a>
+          {{ end }}
+          {{ with .Params.doi }}
+            <a href="https://doi.org/{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
+              <span>DOI</span>
+            </a>
+          {{ end }}
+          {{ with .Params.url_pdf }}
+            <a href="{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "file-pdf") }}
+              <span>PDF</span>
+            </a>
+          {{ end }}
+          {{ with .Params.url_poster }}
+            <a href="{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "file-image") }}
+              <span>Poster</span>
+            </a>
+          {{ end }}
+          {{ with .Params.url_slides }}
+            <a href="{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "file-powerpoint") }}
+              <span>Slides</span>
+            </a>
+          {{ end }}
+          {{ with .Params.url_video }}
+            <a href="{{ . }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" "video") }}
+              <span>Video</span>
+            </a>
+          {{ end }}
+          {{ range .Params.links }}
+            <a href="{{ .url }}">
+              {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .url) }}
+              <span>{{ .name }}</span>
+            </a>
+          {{ end }}
         </div>
       {{ end }}
     </div>

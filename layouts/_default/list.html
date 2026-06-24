@@ -1,9 +1,7 @@
 {{ define "main" }}
-<header class="page-hero">
-  <div class="section__inner page-container">
-    <!-- <p class="eyebrow">{{ .Section | humanize }}</p> -->
-    <h1>{{ .Title }}</h1>
-  </div>
+<header class="page-container page-title">
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
 </header>
 
 <section class="section">
@@ -16,7 +14,12 @@
             <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
             {{ with .Params.authors }}<p>{{ delimit . ", " }}</p>{{ end }}
             {{ with .Params.publication }}<p class="publication-name">{{ . | markdownify }}</p>{{ end }}
-            {{ with .Params.doi }}<a class="text-link" href="https://doi.org/{{ . }}">doi:{{ . }}</a>{{ end }}
+            {{ with .Params.doi }}
+              <a class="text-link" href="https://doi.org/{{ . }}">
+                {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
+                <span>doi:{{ . }}</span>
+              </a>
+            {{ end }}
           </article>
         {{ end }}
       </div>
@@ -54,7 +57,10 @@
                     {{ else if not $isLinkExternal }}
                       {{ $linkHref = $linkHref | relURL }}
                     {{ end }}
-                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>{{ .name }}</a>
+                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
+                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
+                      <span>{{ .name }}</span>
+                    </a>
                   {{ end }}
                 </div>
               {{ end }}

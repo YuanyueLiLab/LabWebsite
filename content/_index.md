@@ -9,17 +9,17 @@ content:
     content: We are a lab focused on metabolomics, AI, and big data.          
     align: center
     link:
-      # icon: magnifying-glass
-      # icon_pack: fas
-      text: 🔬 Explore our research
+      icon: microscope
+      icon_pack: fas
+      text: Our research
       url: /research/
 
   - title: 🔭 Join the Li Lab
     content: Let's explore the world of science together!
     align: center
     link:
-      # icon: graduation-cap
-      # icon_pack: fas
+      icon: graduation-cap
+      icon_pack: fas
       text: Join Us
       url: /hiring/
 

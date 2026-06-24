@@ -1,26 +1,17 @@
 ---
 title: Join us
-date: 2025-04-26
-type: widget_page
 
-sections:  
-  - block: markdown
-    content:
-      title: 欢迎加入李渊越实验室
+content:
+  cards:
+    - title: 欢迎加入李渊越实验室
       text: |-
         我们实验室依托浙江大学基础医学院招聘博士研究生，欢迎符合招生条件的同学报名。同时，我们也欢迎对编程感兴趣的浙江大学本科实习生。
 
         此外，我们实验室常年招聘优秀的博士后及科研助理，欢迎具有相关背景的优秀青年学者加入我们，一起在代谢组学的前沿领域开拓创新！
 
         如需进一步了解详细情况，欢迎随时通过邮箱 future@lilab.cool 联系我们。期待你的到来！
-    design:
-      columns: '1'
-      spacing:
-        padding: ['20px', '0', '20px', '0']
 
-  - block: markdown
-    content:
-      title: 博士后招聘
+    - title: 博士后招聘
       text: |
         #### 一.  技能要求
         1)   计算代谢组学方向
@@ -55,10 +46,5 @@ sections:
 
         #### 四.  联系方式
 
-        &emsp;&emsp;请将申请材料通过电子邮件发送至：future@lilab.cool。邮件标题请注明“博士后申请+姓名”。符合条件者将尽快安排面试，择优录用。申请材料将严格保密。 
-        
-    design:
-      columns: '1'
-      spacing:
-        padding: ['20px', '0', '20px', '0']
+        &emsp;&emsp;请将申请材料通过电子邮件发送至：future@lilab.cool。邮件标题请注明“博士后申请+姓名”。符合条件者将尽快安排面试，择优录用。申请材料将严格保密。
 ---
