@@ -46,31 +46,6 @@ body:not(.is-home) {
   background: #000;
 }
 
-body.is-home::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  background: #000;
-  opacity: 0;
-  transition: opacity 420ms ease;
-}
-
-body.is-home.is-leaving-home::after {
-  opacity: 1;
-}
-
-body.is-home.is-leaving-home .site-header,
-body.is-home.is-leaving-home .home-hero__copy,
-body.is-home.is-leaving-home .home-slider {
-  opacity: 0;
-  transform: translateY(-6px);
-  transition:
-    opacity 260ms ease,
-    transform 260ms ease;
-}
-
 button,
 input,
 textarea,
@@ -524,13 +499,15 @@ main {
 }
 
 .button--primary {
-  color: #051016;
-  background: var(--blue);
+  color:#69c;
+  border-color: #69c;
+  /* background: var(--blue-dark); */
 }
 
 .button--primary:hover {
   color: #051016;
-  background: var(--blue-dark);
+  background: #69c;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.28);
 }
 
 .button--secondary {
@@ -1147,7 +1124,22 @@ time {
 }
 
 .contact-detail__label .fa-icon {
-  color: var(--blue);
+  color: #69c;
+}
+
+.contact-map {
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.contact-map iframe {
+  display: block;
+  width: 100%;
+  min-height: 320px;
+  border: 0;
 }
 
 .page {
@@ -1252,7 +1244,7 @@ time {
 
 .page-section__body .rich-text a {
   color: white;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.42); */
 }
 
 .page-section__body .rich-text a:hover {

@@ -42,8 +42,3 @@ menus:
     - name: "Wiki (internal)"
       url: "http://wiki.lilab.cool"
       weight: 70
-
-markup:
-  goldmark:
-    renderer:
-      unsafe: true

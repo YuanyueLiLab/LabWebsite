@@ -16,13 +16,16 @@ content:
       # office_hours:
       #   - 'Monday 10:00 to 13:00'
       #   - 'Wednesday 09:00 to 10:00'
-      coordinates:
-        latitude: "30.2990"
-        longitude: "120.0786"
       contact_links:
         - icon: twitter
           icon_pack: fab
           name: "@LiYuanyue"
           link: "https://twitter.com/LiYuanyue"
       autolink: true
+
+    - title: "Map"
+      coordinates:
+        latitude: "30.2990"
+        longitude: "120.0786"
+      map: openstreetmap
 ---

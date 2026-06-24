@@ -14,7 +14,8 @@
           {{ with $section.content.email }}
             <p class="contact-detail">
               <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
-              <a href="mailto:{{ . }}">{{ . }}</a>
+              <span>{{ . }}</span>
+              <!-- <a href="mailto:{{ . }}">{{ . }}</a> -->
             </p>
           {{ end }}
           {{ with $section.content.address.region }}
@@ -159,7 +160,7 @@
             {{ with $card.email }}
               <p class="contact-detail">
                 <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
-                <a href="mailto:{{ . }}">{{ . }}</a>
+                <span>{{ . }}</span>
               </p>
             {{ end }}
             {{ with $card.address.region }}
@@ -176,21 +177,45 @@
             {{ end }}
             {{ with $card.coordinates }}
               {{ if and .latitude .longitude }}
-                <p class="contact-detail">
+                <!-- <p class="contact-detail">
                   <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-crosshairs") }}<strong>Coordinates</strong></span>
                   <span>{{ .latitude }}&deg; N, {{ .longitude }}&deg; E</span>
-                </p>
+                </p> -->
+              {{ end }}
+            {{ end }}
+            {{ with $card.map }}
+              {{ if and (eq . "openstreetmap") $card.coordinates.latitude $card.coordinates.longitude }}
+                {{ $lat := float $card.coordinates.latitude }}
+                {{ $lon := float $card.coordinates.longitude }}
+
+                {{ $minLon := sub $lon 0.008 }}
+                {{ $minLat := sub $lat 0.003 }}
+                {{ $maxLon := add $lon 0.008 }}
+                {{ $maxLat := add $lat 0.008 }}
+
+                
+                <div class="contact-map">
+                  <iframe
+                    title="OpenStreetMap location"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox={{ $minLon }},{{ $minLat }},{{ $maxLon }},{{ $maxLat }}&amp;layer=mapnik&amp;marker={{ $lat }},{{ $lon }}">
+                  </iframe>
+                  <!-- <iframe
+                    title="OpenStreetMap location"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?layer=mapnik&marker={{ $card.coordinates.latitude }},{{ $card.coordinates.longitude }}"></iframe> -->
+                </div>
               {{ end }}
             {{ end }}
             {{ with $card.contact_links }}
-              <div class="link-list">
-                {{ range . }}
-                  <a href="{{ .link }}">
-                    {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .link) }}
-                    <span>{{ .name }}</span>
-                  </a>
-                {{ end }}
-              </div>
+              {{ range . }}
+                <p class="contact-detail">
+                  <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack) }}<strong>X</strong></span>
+                  <a href="{{ .link }}" target="_blank">{{ .name }}</a>
+                </p>
+              {{ end }}
             {{ end }}
           </div>
         </div>

@@ -70,6 +70,9 @@
                     {{- $name = printf "%s %s" (strings.TrimSpace (index $parts 1)) (strings.TrimSpace (index $parts 0)) -}}
                   {{- end -}}
                 {{- end -}}
+                {{- if eq (lower $name) "yuanyue li" -}}
+                  {{- $name = "<em>Yuanyue Li</em>" -}}
+                {{- end -}}
                 {{- $authorList = $authorList | append $name -}}
               {{- end -}}
             {{- end -}}
@@ -102,27 +105,22 @@
 
               <div class="page-section__body publication-card__body">
                 {{ if gt (len $authorList) 0 }}
-                  <p class="publication-authors">{{ delimit $authorList ", " }}</p>
+                  <p class="publication-authors">{{ delimit $authorList ", " | safeHTML }}</p>
                 {{ end }}
                 {{ if gt (len $meta) 0 }}
                   <p class="publication-meta">
                     {{ range $meta }}<span>{{ . }}</span>{{ end }}
+                    {{ with $doi }}
+                      <span>{{ partial "fontawesome-icon.html" (dict "icon" "link") }}  <a href="https://doi.org/{{ . }}" target="_blank" rel="noopener">DOI: {{ . }}</a></span>
+                    {{ end }}
                   </p>
                 {{ end }}
-                {{ if or $doi $paperURL }}
+                {{ if and $paperURL (ne $paperURL (printf "https://doi.org/%s" $doi)) }}
                   <div class="project-card__links publication-links" aria-label="{{ $title }} links">
-                    {{ with $doi }}
-                      <a href="https://doi.org/{{ . }}" target="_blank" rel="noopener">
-                        {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
-                        <span>DOI</span>
-                      </a>
-                    {{ end }}
-                    {{ if and $paperURL (ne $paperURL (printf "https://doi.org/%s" $doi)) }}
-                      <a href="{{ $paperURL }}" target="_blank" rel="noopener">
-                        {{ partial "fontawesome-icon.html" (dict "icon" "up-right-from-square") }}
-                        <span>Article</span>
-                      </a>
-                    {{ end }}
+                    <a href="{{ $paperURL }}" target="_blank" rel="noopener">
+                      {{ partial "fontawesome-icon.html" (dict "icon" "up-right-from-square") }}
+                      <span>Article</span>
+                    </a>
                   </div>
                 {{ end }}
               </div>

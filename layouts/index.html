@@ -36,7 +36,7 @@
                   {{ end }}
                   {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
                   <div class="button-row">
-                    <a class="button button--light" href="{{ cond $isExternal $href ($href | relURL) }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>
+                    <a class="button button--primary" href="{{ cond $isExternal $href ($href | relURL) }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }}>
                       {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .text "url" $href) }}
                       <span>{{ .text }}</span>
                     </a>

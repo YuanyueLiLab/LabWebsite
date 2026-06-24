@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/msviewer/static/css/main.e6c13ad2.css",
+    "main.js": "/msviewer/static/js/main.a9dd029d.js",
+    "index.html": "/msviewer/index.html",
+    "main.e6c13ad2.css.map": "/msviewer/static/css/main.e6c13ad2.css.map",
+    "main.a9dd029d.js.map": "/msviewer/static/js/main.a9dd029d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.a9dd029d.js"
+  ]
+}
