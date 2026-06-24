@@ -23,9 +23,10 @@ content:
           link: "https://twitter.com/LiYuanyue"
       autolink: true
 
-    - title: "Map"
+    - title: "Location"
       coordinates:
         latitude: "30.2990"
         longitude: "120.0786"
-      map: openstreetmap
+      map: amap
+      key: dda11334e1dc0d7e42da845632be72d4
 ---

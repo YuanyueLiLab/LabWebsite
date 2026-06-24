@@ -1142,6 +1142,52 @@ time {
   border: 0;
 }
 
+.contact-map > img {
+  display: block;
+  width: 100%;
+  min-height: 320px;
+  object-fit: cover;
+}
+
+.contact-map.contact-map--amap {
+  display: block;
+  width: 100%;
+  min-height: 320px;
+}
+
+.contact-map-marker {
+  position: relative;
+  width: 28px;
+  height: 34px;
+  pointer-events: none;
+}
+
+.contact-map-marker::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 1px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: #e5484d;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.contact-map-marker::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(-50%);
+}
+
 .page {
   position: relative;
   min-height: calc(100svh - 70px);

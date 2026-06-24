@@ -9,38 +9,7 @@
   <div class="content-blocks">
     {{ range $index, $section := $sections }}
       {{ if eq $section.block "contact" }}
-        <section class="content-block contact-block">
-          {{ with $section.content.title }}<h2>{{ . }}</h2>{{ end }}
-          {{ with $section.content.email }}
-            <p class="contact-detail">
-              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
-              <span>{{ . }}</span>
-              <!-- <a href="mailto:{{ . }}">{{ . }}</a> -->
-            </p>
-          {{ end }}
-          {{ with $section.content.address.region }}
-            <p class="contact-detail">
-              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
-              <span>{{ . }}</span>
-            </p>
-          {{ end }}
-          {{ with $section.content.postcode }}
-            <p class="contact-detail">
-              <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "signs-post") }}<strong>Postcode</strong></span>
-              <span>{{ . }}</span>
-            </p>
-          {{ end }}
-          {{ with $section.content.contact_links }}
-            <div class="link-list">
-              {{ range . }}
-                <a href="{{ .link }}">
-                  {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .link) }}
-                  <span>{{ .name }}</span>
-                </a>
-              {{ end }}
-            </div>
-          {{ end }}
-        </section>
+        {{ partial "single-contact-section.html" (dict "content" $section.content "showTitle" true "wrap" true) }}
       {{ else if eq $section.block "markdown" }}
         {{ $label := or $section.content.label $section.content.subtitle }}
         <section id="page-section-{{ add $index 1 }}" class="page-section page-card">
@@ -157,66 +126,7 @@
           {{ end }}
           <div class="rich-text">
             {{ with $card.text }}{{ . | markdownify }}{{ end }}
-            {{ with $card.email }}
-              <p class="contact-detail">
-                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
-                <span>{{ . }}</span>
-              </p>
-            {{ end }}
-            {{ with $card.address.region }}
-              <p class="contact-detail">
-                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
-                <span>{{ . }}</span>
-              </p>
-            {{ end }}
-            {{ with $card.postcode }}
-              <p class="contact-detail">
-                <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "signs-post") }}<strong>Postcode</strong></span>
-                <span>{{ . }}</span>
-              </p>
-            {{ end }}
-            {{ with $card.coordinates }}
-              {{ if and .latitude .longitude }}
-                <!-- <p class="contact-detail">
-                  <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-crosshairs") }}<strong>Coordinates</strong></span>
-                  <span>{{ .latitude }}&deg; N, {{ .longitude }}&deg; E</span>
-                </p> -->
-              {{ end }}
-            {{ end }}
-            {{ with $card.map }}
-              {{ if and (eq . "openstreetmap") $card.coordinates.latitude $card.coordinates.longitude }}
-                {{ $lat := float $card.coordinates.latitude }}
-                {{ $lon := float $card.coordinates.longitude }}
-
-                {{ $minLon := sub $lon 0.008 }}
-                {{ $minLat := sub $lat 0.003 }}
-                {{ $maxLon := add $lon 0.008 }}
-                {{ $maxLat := add $lat 0.008 }}
-
-                
-                <div class="contact-map">
-                  <iframe
-                    title="OpenStreetMap location"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.openstreetmap.org/export/embed.html?bbox={{ $minLon }},{{ $minLat }},{{ $maxLon }},{{ $maxLat }}&amp;layer=mapnik&amp;marker={{ $lat }},{{ $lon }}">
-                  </iframe>
-                  <!-- <iframe
-                    title="OpenStreetMap location"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.openstreetmap.org/export/embed.html?layer=mapnik&marker={{ $card.coordinates.latitude }},{{ $card.coordinates.longitude }}"></iframe> -->
-                </div>
-              {{ end }}
-            {{ end }}
-            {{ with $card.contact_links }}
-              {{ range . }}
-                <p class="contact-detail">
-                  <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack) }}<strong>X</strong></span>
-                  <a href="{{ .link }}" target="_blank">{{ .name }}</a>
-                </p>
-              {{ end }}
-            {{ end }}
+            {{ partial "single-contact-section.html" (dict "content" $card) }}
           </div>
         </div>
       </section>

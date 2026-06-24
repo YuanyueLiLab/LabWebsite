@@ -1,0 +1,178 @@
+{{ $content := .content }}
+{{ $wrap := default false .wrap }}
+{{ if $wrap }}<section class="content-block contact-block">{{ end }}
+  {{ if .showTitle }}
+    {{ with $content.title }}<h2>{{ . }}</h2>{{ end }}
+  {{ end }}
+  {{ with $content.email }}
+    <p class="contact-detail">
+      <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}<strong>Email</strong></span>
+      <span>{{ . }}</span>
+      <!-- <a href="mailto:{{ . }}">{{ . }}</a> -->
+    </p>
+  {{ end }}
+  {{ with $content.address.region }}
+    <p class="contact-detail">
+      <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
+      <span>{{ . }}</span>
+    </p>
+  {{ end }}
+  {{ with $content.postcode }}
+    <p class="contact-detail">
+      <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "signs-post") }}<strong>Postcode</strong></span>
+      <span>{{ . }}</span>
+    </p>
+  {{ end }}
+  {{ with $content.coordinates }}
+    {{ if and .latitude .longitude }}
+      <!-- <p class="contact-detail">
+        <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-crosshairs") }}<strong>Coordinates</strong></span>
+        <span>{{ .latitude }}&deg; N, {{ .longitude }}&deg; E</span>
+      </p> -->
+    {{ end }}
+  {{ end }}
+  {{ with $content.map }}
+    {{ if and (eq . "openstreetmap") $content.coordinates.latitude $content.coordinates.longitude }}
+      {{ $lat := float $content.coordinates.latitude }}
+      {{ $lon := float $content.coordinates.longitude }}
+      {{ $minLon := sub $lon 0.008 }}
+      {{ $minLat := sub $lat 0.003 }}
+      {{ $maxLon := add $lon 0.008 }}
+      {{ $maxLat := add $lat 0.008 }}
+
+      <div class="contact-map">
+        <iframe
+          title="OpenStreetMap location"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.openstreetmap.org/export/embed.html?bbox={{ $minLon }},{{ $minLat }},{{ $maxLon }},{{ $maxLat }}&amp;layer=mapnik&amp;marker={{ $lat }},{{ $lon }}">
+        </iframe>
+        <!-- <iframe
+          title="OpenStreetMap location"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.openstreetmap.org/export/embed.html?layer=mapnik&marker={{ $content.coordinates.latitude }},{{ $content.coordinates.longitude }}"></iframe> -->
+      </div>
+    {{ else if and (eq . "amap") $content.coordinates.latitude $content.coordinates.longitude }}
+      {{ $lat := float $content.coordinates.latitude }}
+      {{ $lon := float $content.coordinates.longitude }}
+      {{ $mapName := default "Location" $content.title }}
+      {{ $mapID := printf "contact-map-%s" (md5 (printf "%s-%s-%s-%t" $mapName $content.coordinates.latitude $content.coordinates.longitude $wrap)) }}
+      {{ with $content.key }}
+        <div id="{{ $mapID }}" class="contact-map contact-map--amap" aria-label="AMap location"></div>
+        <script>
+          (function () {
+            var mapId = {{ $mapID | jsonify | safeJS }};
+            var key = {{ . | jsonify | safeJS }};
+            var longitude = {{ $lon }};
+            var latitude = {{ $lat }};
+            var mapName = {{ $mapName | jsonify | safeJS }};
+
+            function initMap() {
+              var container = document.getElementById(mapId);
+              if (!container || container.dataset.mapReady === "true") {
+                return;
+              }
+
+              if (!(window.AMap && window.AMap.Map)) {
+                return;
+              }
+
+              container.dataset.mapReady = "true";
+
+              var position = new AMap.LngLat(longitude, latitude);
+              var map = new AMap.Map(mapId, {
+                zoom: 16,
+                center: position,
+                viewMode: "2D",
+                resizeEnable: true
+              });
+
+              var marker = new AMap.Marker({
+                position: position,
+                title: mapName,
+                content: '<div class="contact-map-marker" aria-hidden="true"></div>',
+                offset: new AMap.Pixel(-14, -34),
+                zIndex: 120
+              });
+
+              map.add(marker);
+              map.setCenter(position);
+            }
+
+            function loadMap() {
+              if (window.AMap && window.AMap.Map) {
+                initMap();
+                return;
+              }
+
+              window.__amapInitQueue = window.__amapInitQueue || [];
+              window.__amapInitQueue.push(initMap);
+
+              if (window.__amapScriptLoading) {
+                return;
+              }
+
+              window.__amapScriptLoading = true;
+
+              var script = document.createElement("script");
+              script.dataset.amapLoader = "true";
+              script.src = "https://webapi.amap.com/maps?v=2.0&key=" + encodeURIComponent(key);
+              script.async = true;
+              script.onload = function () {
+                window.__amapScriptLoading = false;
+                var queue = window.__amapInitQueue || [];
+                window.__amapInitQueue = [];
+                queue.forEach(function (callback) {
+                  callback();
+                });
+              };
+              script.onerror = function () {
+                window.__amapScriptLoading = false;
+                var container = document.getElementById(mapId);
+                if (container) {
+                  container.dataset.mapError = "true";
+                }
+              };
+              document.head.appendChild(script);
+            }
+
+            if (document.readyState === "loading") {
+              document.addEventListener("DOMContentLoaded", loadMap, { once: true });
+            } else {
+              loadMap();
+            }
+          }());
+        </script>
+      {{ else }}
+        <div class="contact-map">
+          <iframe
+            title="AMap location"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://ditu.amap.com/regeo?lng={{ $lon }}&amp;lat={{ $lat }}&amp;name={{ $mapName | urlquery }}&amp;src=lilab.cool&amp;callnative=0&amp;innersrc=uriapi">
+          </iframe>
+        </div>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ with $content.contact_links }}
+    {{ if $wrap }}
+      <div class="link-list">
+        {{ range . }}
+          <a href="{{ .link }}">
+            {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" .link) }}
+            <span>{{ .name }}</span>
+          </a>
+        {{ end }}
+      </div>
+    {{ else }}
+      {{ range . }}
+        <p class="contact-detail">
+          <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack) }}<strong>X</strong></span>
+          <a href="{{ .link }}" target="_blank">{{ .name }}</a>
+        </p>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ if $wrap }}</section>{{ end }}
