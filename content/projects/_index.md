@@ -1,11 +1,4 @@
 ---
 title: Projects
-
-# Listing view
-view: project
-
-# Optional banner image (relative to `assets/media/` folder).
-banner:
-  caption: ''
-  image: ''
+summary: Software, algorithms, and research tools developed by the lab for metabolomics and mass spectrometry.
 ---

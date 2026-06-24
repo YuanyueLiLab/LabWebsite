@@ -1,0 +1,71 @@
+{{ define "main" }}
+<article class="page projects-page">
+  <div class="sky-stars page-stars" aria-hidden="true"></div>
+  <div class="page__content">
+    <div class="page-container page-title">
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
+    </div>
+
+    <div class="page-container page-body__inner">
+      <div class="project-page-list">
+        {{ range .Pages.ByDate.Reverse }}
+          {{ $page := . }}
+          {{ $projectHref := .RelPermalink }}
+          {{ with .Params.external_link }}
+            {{ $projectHref = . }}
+          {{ end }}
+          {{ $isProjectExternal := or (hasPrefix $projectHref "http://") (hasPrefix $projectHref "https://") }}
+          {{ $projectLink := cond $isProjectExternal $projectHref ($projectHref | relURL) }}
+          {{ $projectImage := or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
+          {{ $label := "Project" }}
+          {{ with .Params.tags }}
+            {{ $label = index . 0 }}
+          {{ end }}
+
+          <section class="page-section page-card project-page-card">
+            <div class="page-section__heading">
+              <p class="page-section__label">{{ $label }}</p>
+              <h2>
+                <a href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a>
+              </h2>
+            </div>
+            <div class="page-section__body">
+              {{ with $projectImage }}
+                {{ $img := .Resize "900x webp q82" }}
+                <a class="page-image project-page-card__image" href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
+                  <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
+                </a>
+              {{ end }}
+
+              {{ with .Params.summary }}
+                <div class="rich-text">{{ . | markdownify }}</div>
+              {{ else with .Summary }}
+                <div class="rich-text">{{ . }}</div>
+              {{ end }}
+
+              {{ with .Params.links }}
+                <div class="project-card__links project-page-card__links" aria-label="{{ $page.Title }} links">
+                  {{ range . }}
+                    {{ $linkHref := .url }}
+                    {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
+                    {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
+                      {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
+                    {{ else if not $isLinkExternal }}
+                      {{ $linkHref = $linkHref | relURL }}
+                    {{ end }}
+                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
+                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
+                      <span>{{ .name }}</span>
+                    </a>
+                  {{ end }}
+                </div>
+              {{ end }}
+            </div>
+          </section>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</article>
+{{ end }}

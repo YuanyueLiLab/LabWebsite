@@ -1,8 +1,6 @@
 ---
 title: Research
-date: "2026-06-23"
-type: widget_page
-summary: We develop metabolomics, mass spectrometry, AI, and data-analysis methods for biomedical discovery.
+# summary: We develop metabolomics, mass spectrometry, AI, and data-analysis methods for biomedical discovery.
 
 content:
   cards:

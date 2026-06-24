@@ -1,0 +1,142 @@
+{{ define "main" }}
+{{- $monthNumbers := dict "jan" 1 "feb" 2 "mar" 3 "apr" 4 "may" 5 "jun" 6 "jul" 7 "aug" 8 "sep" 9 "oct" 10 "nov" 11 "dec" 12 -}}
+{{- $monthNames := dict "jan" "January" "feb" "February" "mar" "March" "apr" "April" "may" "May" "jun" "June" "jul" "July" "aug" "August" "sep" "September" "oct" "October" "nov" "November" "dec" "December" -}}
+{{- $bib := readFile "content/publication/CV.bib" -}}
+{{- $publications := slice -}}
+{{- range $chunk := split $bib "\n@" -}}
+  {{- $entry := strings.TrimSpace (replaceRE "^@" "" $chunk) -}}
+  {{- if and $entry (gt (len (findRE `^[[:alpha:]]+\{` $entry)) 0) -}}
+    {{- $lines := split $entry "\n" -}}
+    {{- $header := index $lines 0 -}}
+    {{- $entryType := lower (replaceRE `^([[:alpha:]]+)\{.*$` "$1" $header) -}}
+    {{- $key := replaceRE `^[[:alpha:]]+\{([^,]+),.*$` "$1" $header -}}
+    {{- $fields := dict "entryType" $entryType "key" $key -}}
+    {{- range $line := $lines -}}
+      {{- $line = strings.TrimSpace $line -}}
+      {{- if gt (len (findRE `^[[:alpha:]_-]+\s*=` $line)) 0 -}}
+        {{- $fieldName := lower (replaceRE `^([[:alpha:]_-]+)\s*=.*$` "$1" $line) -}}
+        {{- $rawValue := replaceRE `^[[:alpha:]_-]+\s*=\s*` "" $line -}}
+        {{- $rawValue = replaceRE `,\s*$` "" $rawValue -}}
+        {{- $value := strings.TrimSpace $rawValue -}}
+        {{- $value = replaceRE `^["{]+` "" $value -}}
+        {{- $value = replaceRE `["}]+$` "" $value -}}
+        {{- $value = replace $value `\%` "%" -}}
+        {{- $value = replace $value `\&` "&" -}}
+        {{- $value = replace $value `\_` "_" -}}
+        {{- $value = replace $value "{" "" -}}
+        {{- $value = replace $value "}" "" -}}
+        {{- $fields = merge $fields (dict $fieldName $value) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $year := int (default 0 (index $fields "year")) -}}
+    {{- $monthKey := lower (default "" (index $fields "month")) -}}
+    {{- $monthNumber := int (default 0 (index $monthNumbers $monthKey)) -}}
+    {{- $monthName := default "" (index $monthNames $monthKey) -}}
+    {{- $publication := merge $fields (dict "sortKey" (add (mul $year 100) $monthNumber) "monthName" $monthName) -}}
+    {{- with index $publication "title" -}}
+      {{- $publications = $publications | append $publication -}}
+    {{- end -}}
+  {{- end -}}
+{{- end }}
+
+<article class="page publication-page">
+  <div class="sky-stars page-stars" aria-hidden="true"></div>
+  <div class="page__content">
+    <div class="page-container page-title">
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
+    </div>
+
+    <div class="page-container page-body__inner">
+      {{ if gt (len $publications) 0 }}
+        <div class="publication-list">
+          {{ range sort $publications "sortKey" "desc" }}
+            {{- $title := index . "title" -}}
+            {{- $year := index . "year" -}}
+            {{- $monthName := index . "monthName" -}}
+            {{- $journal := index . "journal" -}}
+            {{- $doi := index . "doi" -}}
+            {{- $paperURL := index . "url" -}}
+            {{- if and (not $paperURL) $doi -}}
+              {{- $paperURL = printf "https://doi.org/%s" $doi -}}
+            {{- end -}}
+            {{- $authorList := slice -}}
+            {{- with index . "author" -}}
+              {{- range split . " and " -}}
+                {{- $name := strings.TrimSpace . -}}
+                {{- if in $name "," -}}
+                  {{- $parts := split $name "," -}}
+                  {{- if ge (len $parts) 2 -}}
+                    {{- $name = printf "%s %s" (strings.TrimSpace (index $parts 1)) (strings.TrimSpace (index $parts 0)) -}}
+                  {{- end -}}
+                {{- end -}}
+                {{- $authorList = $authorList | append $name -}}
+              {{- end -}}
+            {{- end -}}
+            {{- $meta := slice -}}
+            {{- with $journal }}{{ $meta = $meta | append . }}{{ end -}}
+            {{- $volume := index . "volume" -}}
+            {{- $number := index . "number" -}}
+            {{- if and $volume $number -}}
+              {{- $meta = $meta | append (printf "%s(%s)" $volume $number) -}}
+            {{- else if $volume -}}
+              {{- $meta = $meta | append $volume -}}
+            {{- else if $number -}}
+              {{- $meta = $meta | append (printf "No. %s" $number) -}}
+            {{- end -}}
+            {{- with index . "pages" }}{{ $meta = $meta | append (replace . "--" "-") }}{{ end -}}
+            {{- with $year }}{{ $meta = $meta | append . }}{{ end }}
+            <article class="page-section page-card publication-card">
+              <div class="page-section__heading publication-card__heading">
+                <p class="page-section__label">
+                  {{ with $year }}{{ . }}{{ end }}
+                </p>
+                <h2>
+                  {{ if $paperURL }}
+                    <a href="{{ $paperURL }}" target="_blank" rel="noopener">{{ $title }}</a>
+                  {{ else }}
+                    {{ $title }}
+                  {{ end }}
+                </h2>
+              </div>
+
+              <div class="page-section__body publication-card__body">
+                {{ if gt (len $authorList) 0 }}
+                  <p class="publication-authors">{{ delimit $authorList ", " }}</p>
+                {{ end }}
+                {{ if gt (len $meta) 0 }}
+                  <p class="publication-meta">
+                    {{ range $meta }}<span>{{ . }}</span>{{ end }}
+                  </p>
+                {{ end }}
+                {{ if or $doi $paperURL }}
+                  <div class="project-card__links publication-links" aria-label="{{ $title }} links">
+                    {{ with $doi }}
+                      <a href="https://doi.org/{{ . }}" target="_blank" rel="noopener">
+                        {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
+                        <span>DOI</span>
+                      </a>
+                    {{ end }}
+                    {{ if and $paperURL (ne $paperURL (printf "https://doi.org/%s" $doi)) }}
+                      <a href="{{ $paperURL }}" target="_blank" rel="noopener">
+                        {{ partial "fontawesome-icon.html" (dict "icon" "up-right-from-square") }}
+                        <span>Article</span>
+                      </a>
+                    {{ end }}
+                  </div>
+                {{ end }}
+              </div>
+            </article>
+          {{ end }}
+        </div>
+      {{ else }}
+        <section class="page-section page-card publication-empty">
+          <div class="page-section__heading">
+            <h2>No publications found</h2>
+          </div>
+        </section>
+      {{ end }}
+    </div>
+  </div>
+</article>
+{{ end }}

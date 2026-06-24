@@ -1,0 +1,79 @@
+{{ define "main" }}
+{{ $defaultGroups := slice "Principal Investigator" "Postdoctoral Researchers" "Research Assistants" "Graduate Students" "Undergraduate Students" "Visitors" "Alumni" }}
+{{ $peopleConfig := dict }}
+{{ with .Params.content.people }}
+  {{ $peopleConfig = . }}
+{{ end }}
+{{ $groups := $defaultGroups }}
+{{ with $peopleConfig.groups }}
+  {{ $groups = . }}
+{{ end }}
+{{ $sortBy := default "Params.last_name" $peopleConfig.sort_by }}
+{{ $sortOrder := "asc" }}
+{{ if eq $peopleConfig.sort_ascending false }}
+  {{ $sortOrder = "desc" }}
+{{ end }}
+{{ $people := sort (where (where site.Pages "Section" "people") "Params.user_groups" "!=" nil) $sortBy $sortOrder }}
+
+<article class="page people-page">
+  <div class="sky-stars page-stars" aria-hidden="true"></div>
+  <div class="page__content">
+    <div class="page-container page-title">
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
+    </div>
+
+    <div class="page-container page-body__inner">
+      <div class="content-blocks people-blocks">
+        {{ range $groups }}
+          {{ $group := . }}
+          {{ $groupPeople := where $people "Params.user_groups" "intersect" (slice $group) }}
+          {{ if gt (len $groupPeople) 0 }}
+            <section id="{{ anchorize $group }}" class="page-section page-card people-section">
+              <div class="page-section__heading">
+                <h2>{{ $group }}</h2>
+              </div>
+              <div class="page-section__body people-section__body">
+                <div class="people-grid">
+                  {{ range $groupPeople }}
+                    {{ $person := . }}
+                    <article class="people-person">
+                      {{ with .Resources.GetMatch "avatar.*" }}
+                        {{ $avatar := .Fill "270x270 Center webp q84" }}
+                        <a class="people-person__avatar" href="{{ $person.RelPermalink }}">
+                          <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="{{ $person.Title }}">
+                        </a>
+                      {{ end }}
+                      <div class="people-person__body">
+                        <h3 class="people-person__name">
+                          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                          {{ with .Params.title_chinese }}<span>{{ . }}</span>{{ end }}
+                        </h3>
+                        {{ with .Params.role }}<p class="people-person__role">{{ . }}</p>{{ end }}
+                        {{ with .Params.email }}
+                          <p class="people-person__email"><a href="mailto:{{ . }}">{{ . }}</a></p>
+                        {{ end }}
+                        {{ with .Params.social }}
+                          <div class="social-links people-person__links" aria-label="{{ $person.Title }} links">
+                            {{ range . }}
+                              {{ $href := .link }}
+                              {{ $isExternal := or (hasPrefix $href "http://") (hasPrefix $href "https://") }}
+                              <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="noopener"{{ end }} aria-label="{{ default .icon .label }}">
+                                {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "url" $href) }}
+                              </a>
+                            {{ end }}
+                          </div>
+                        {{ end }}
+                      </div>
+                    </article>
+                  {{ end }}
+                </div>
+              </div>
+            </section>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</article>
+{{ end }}
