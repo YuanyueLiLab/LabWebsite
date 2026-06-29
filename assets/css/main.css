@@ -361,6 +361,59 @@ html.page-transition-enabled.is-page-leaving main {
   filter: drop-shadow(0 0 10px rgba(155, 200, 255, 0.22));
 }
 
+.sky-meteor {
+  position: absolute;
+  left: var(--meteor-x);
+  top: var(--meteor-y);
+  z-index: 3;
+  width: var(--meteor-length);
+  height: 2px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0) rotate(var(--meteor-angle)) scaleX(0.42);
+  transform-origin: right center;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(158, 206, 255, 0.44) 38%, rgba(255, 255, 255, 0.98));
+  box-shadow:
+    0 0 10px rgba(142, 219, 212, 0.36),
+    0 0 22px rgba(191, 233, 255, 0.2);
+  animation: sky-meteor var(--meteor-duration) ease-out forwards;
+}
+
+.sky-meteor::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.88);
+  transform: translateY(-50%);
+}
+
+@keyframes sky-meteor {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(var(--meteor-angle)) scaleX(0.3);
+  }
+
+  10% {
+    opacity: 0.96;
+  }
+
+  72% {
+    opacity: 0.84;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--meteor-travel-x), var(--meteor-travel-y), 0) rotate(var(--meteor-angle)) scaleX(1);
+  }
+}
+
 .home-hero__inner {
   position: relative;
   z-index: 2;
