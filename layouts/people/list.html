@@ -23,7 +23,7 @@
     </div>
 
     <div class="page-container page-body__inner">
-      <div class="content-blocks people-blocks">
+      <div class="content-blocks">
         {{ range $groups }}
           {{ $group := . }}
           {{ $groupPeople := where $people "Params.user_groups" "intersect" (slice $group) }}
