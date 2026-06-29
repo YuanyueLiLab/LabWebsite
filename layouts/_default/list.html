@@ -1,103 +1,105 @@
 {{ define "main" }}
-<header class="page-container page-title">
-  <h1>{{ .Title }}</h1>
-  {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
-</header>
+<article class="page">
+  <div class="page__content">
+    <header class="page-container page-title">
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.summary }}<p>{{ . | markdownify | plainify }}</p>{{ end }}
+    </header>
 
-<section class="section">
-  <div class="section__inner page-container">
-    {{ if eq .Section "publication" }}
-      <div class="citation-list">
-        {{ range .Pages.ByDate.Reverse }}
-          <article class="citation">
-            <time>{{ .Date.Format "2006" }}</time>
-            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-            {{ with .Params.authors }}<p>{{ delimit . ", " }}</p>{{ end }}
-            {{ with .Params.publication }}<p class="publication-name">{{ . | markdownify }}</p>{{ end }}
-            {{ with .Params.doi }}
-              <a class="text-link" href="https://doi.org/{{ . }}">
-                {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
-                <span>doi:{{ . }}</span>
-              </a>
-            {{ end }}
-          </article>
-        {{ end }}
-      </div>
-    {{ else if eq .Section "projects" }}
-      <div class="project-showcase">
-        {{ range .Pages.ByDate.Reverse }}
-          {{ $page := . }}
-          {{ $projectHref := .RelPermalink }}
-          {{ with .Params.external_link }}
-            {{ $projectHref = . }}
+    <div class="page-container page-body__inner">
+      {{ if eq .Section "publication" }}
+        <div class="citation-list">
+          {{ range .Pages.ByDate.Reverse }}
+            <article class="citation">
+              <time>{{ .Date.Format "2006" }}</time>
+              <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+              {{ with .Params.authors }}<p>{{ delimit . ", " }}</p>{{ end }}
+              {{ with .Params.publication }}<p class="publication-name">{{ . | markdownify }}</p>{{ end }}
+              {{ with .Params.doi }}
+                <a class="text-link" href="https://doi.org/{{ . }}">
+                  {{ partial "fontawesome-icon.html" (dict "icon" "link") }}
+                  <span>doi:{{ . }}</span>
+                </a>
+              {{ end }}
+            </article>
           {{ end }}
-          {{ $isProjectExternal := or (hasPrefix $projectHref "http://") (hasPrefix $projectHref "https://") }}
-          {{ $projectImage := or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
-          <article class="project-card project-card--showcase{{ if not $projectImage }} project-card--no-image{{ end }}">
-            {{ with $projectImage }}
-              {{ $img := .Resize "540x webp q82" }}
-              <a class="project-card__image" href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
-                <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
-              </a>
+        </div>
+      {{ else if eq .Section "projects" }}
+        <div class="project-showcase">
+          {{ range .Pages.ByDate.Reverse }}
+            {{ $page := . }}
+            {{ $projectHref := .RelPermalink }}
+            {{ with .Params.external_link }}
+              {{ $projectHref = . }}
             {{ end }}
-            <div class="project-card__body">
-              <h2><a href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a></h2>
-              {{ with .Params.summary }}
-                <div class="project-card__summary">{{ . | markdownify }}</div>
-              {{ else with .Summary }}
-                <div class="project-card__summary">{{ . }}</div>
+            {{ $isProjectExternal := or (hasPrefix $projectHref "http://") (hasPrefix $projectHref "https://") }}
+            {{ $projectImage := or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
+            <article class="project-card project-card--showcase{{ if not $projectImage }} project-card--no-image{{ end }}">
+              {{ with $projectImage }}
+                {{ $img := .Resize "540x webp q82" }}
+                <a class="project-card__image" href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
+                  <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
+                </a>
               {{ end }}
-              {{ with .Params.links }}
-                <div class="project-card__links" aria-label="{{ $page.Title }} links">
-                  {{ range . }}
-                    {{ $linkHref := .url }}
-                    {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
-                    {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
-                      {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
-                    {{ else if not $isLinkExternal }}
-                      {{ $linkHref = $linkHref | relURL }}
+              <div class="project-card__body">
+                <h2><a href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a></h2>
+                {{ with .Params.summary }}
+                  <div class="project-card__summary">{{ . | markdownify }}</div>
+                {{ else with .Summary }}
+                  <div class="project-card__summary">{{ . }}</div>
+                {{ end }}
+                {{ with .Params.links }}
+                  <div class="project-card__links" aria-label="{{ $page.Title }} links">
+                    {{ range . }}
+                      {{ $linkHref := .url }}
+                      {{ $isLinkExternal := or (hasPrefix $linkHref "http://") (hasPrefix $linkHref "https://") }}
+                      {{ if and (not $isLinkExternal) (not (hasPrefix $linkHref "/")) }}
+                        {{ $linkHref = printf "%s%s" $page.RelPermalink $linkHref }}
+                      {{ else if not $isLinkExternal }}
+                        {{ $linkHref = $linkHref | relURL }}
+                      {{ end }}
+                      <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
+                        {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
+                        <span>{{ .name }}</span>
+                      </a>
                     {{ end }}
-                    <a href="{{ $linkHref }}"{{ if $isLinkExternal }} target="_blank" rel="noopener"{{ end }}>
-                      {{ partial "fontawesome-icon.html" (dict "icon" .icon "pack" .icon_pack "name" .name "url" $linkHref) }}
-                      <span>{{ .name }}</span>
-                    </a>
-                  {{ end }}
-                </div>
+                  </div>
+                {{ end }}
+              </div>
+            </article>
+          {{ end }}
+        </div>
+      {{ else if eq .Section "event" }}
+        <div class="timeline-list">
+          {{ range .Pages.ByDate.Reverse }}
+            <article class="timeline-item">
+              <time>{{ .Date.Format "Jan 2, 2006" }}</time>
+              <div>
+                <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+                {{ with .Params.event }}<p>{{ . }}</p>{{ else with .Params.summary }}<p>{{ . }}</p>{{ end }}
+              </div>
+            </article>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="card-list">
+          {{ range .Pages.ByDate.Reverse }}
+            {{ $page := . }}
+            <article class="list-card">
+              {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
+                {{ $img := .Fill "560x320 Center webp q82" }}
+                <a href="{{ $page.RelPermalink }}"><img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt=""></a>
               {{ end }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-    {{ else if eq .Section "event" }}
-      <div class="timeline-list">
-        {{ range .Pages.ByDate.Reverse }}
-          <article class="timeline-item">
-            <time>{{ .Date.Format "Jan 2, 2006" }}</time>
-            <div>
-              <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-              {{ with .Params.event }}<p>{{ . }}</p>{{ else with .Params.summary }}<p>{{ . }}</p>{{ end }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-    {{ else }}
-      <div class="card-list">
-        {{ range .Pages.ByDate.Reverse }}
-          {{ $page := . }}
-          <article class="list-card">
-            {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
-              {{ $img := .Fill "560x320 Center webp q82" }}
-              <a href="{{ $page.RelPermalink }}"><img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt=""></a>
-            {{ end }}
-            <div>
-              {{ if not .Date.IsZero }}<time>{{ .Date.Format "Jan 2, 2006" }}</time>{{ end }}
-              <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-              {{ with .Summary }}<p>{{ . | plainify | truncate 180 }}</p>{{ end }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-    {{ end }}
+              <div>
+                {{ if not .Date.IsZero }}<time>{{ .Date.Format "Jan 2, 2006" }}</time>{{ end }}
+                <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+                {{ with .Summary }}<p>{{ . | plainify | truncate 180 }}</p>{{ end }}
+              </div>
+            </article>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
   </div>
-</section>
+</article>
 {{ end }}

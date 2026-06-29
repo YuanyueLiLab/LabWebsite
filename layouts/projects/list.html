@@ -31,7 +31,7 @@
 
             <div class="project-page-card__content">
               <div class="page-section__heading">
-                <p class="page-section__label">{{ $label }}</p>
+                {{ with $label }}<p class="page-section__label">{{ . }}</p>{{ end }}
                 <h2>
                   <a href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a>
                 </h2>

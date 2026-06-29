@@ -11,10 +11,29 @@
       <!-- <a href="mailto:{{ . }}">{{ . }}</a> -->
     </p>
   {{ end }}
-  {{ with $content.address.region }}
+  {{ $addressEnLines := slice }}
+  {{ $addressCnLines := slice }}
+  {{ $addressFallbackLines := slice }}
+  {{ with $content.address }}
+    {{ with .en }}{{ $addressEnLines = $addressEnLines | append . }}{{ end }}
+    {{ with .en_1 }}{{ $addressEnLines = $addressEnLines | append . }}{{ end }}
+    {{ with .en_2 }}{{ $addressEnLines = $addressEnLines | append . }}{{ end }}
+    {{ with .cn }}{{ $addressCnLines = $addressCnLines | append . }}{{ end }}
+    {{ with .cn_1 }}{{ $addressCnLines = $addressCnLines | append . }}{{ end }}
+    {{ with .cn_2 }}{{ $addressCnLines = $addressCnLines | append . }}{{ end }}
+    {{ with .region }}{{ $addressFallbackLines = $addressFallbackLines | append . }}{{ end }}
+  {{ end }}
+  {{ if or (gt (len $addressEnLines) 0) (gt (len $addressCnLines) 0) (gt (len $addressFallbackLines) 0) }}
     <p class="contact-detail">
       <span class="contact-detail__label">{{ partial "fontawesome-icon.html" (dict "icon" "location-dot") }}<strong>Address</strong></span>
-      <span>{{ . }}</span>
+      <span class="contact-address">
+        {{ range $addressEnLines }}<span lang="en">{{ . }}</span>{{ end }}
+        {{ if and (gt (len $addressEnLines) 0) (gt (len $addressCnLines) 0) }}<span class="contact-address__spacer" aria-hidden="true"></span>{{ end }}
+        {{ range $addressCnLines }}<span lang="zh-Hans">{{ . }}</span>{{ end }}
+        {{ if and (eq (len $addressEnLines) 0) (eq (len $addressCnLines) 0) }}
+          {{ range $addressFallbackLines }}<span>{{ . }}</span>{{ end }}
+        {{ end }}
+      </span>
     </p>
   {{ end }}
   {{ with $content.postcode }}

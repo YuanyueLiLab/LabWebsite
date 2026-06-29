@@ -124,7 +124,7 @@
               {{ end }}
             </figure>
           {{ end }}
-          <div class="rich-text">
+          <div class="rich-text{{ with $card.map }} rich-text--wide{{ end }}">
             {{ with $card.text }}{{ . | markdownify }}{{ end }}
             {{ partial "single-contact-section.html" (dict "content" $card) }}
           </div>
