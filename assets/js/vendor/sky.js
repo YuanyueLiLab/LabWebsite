@@ -28,6 +28,7 @@ var Sky = function Sky(layers, density) {
 	var pointerTargetX = centerX;
 	var pointerTargetY = centerY;
 	var pointerSmoothing = 0.012;
+	var galaxyFrequency = 25;
 
 	var sky = document.createElement("DIV");
 	sky.id = "sky";
@@ -154,7 +155,7 @@ var Sky = function Sky(layers, density) {
 				star.style.backgroundColor = red;
 			}
 
-			if ( i%50 == 0 && layer.className.indexOf("0") > -1 ) {
+			if ( i%galaxyFrequency == 0 ) {
 				var whichGal = Math.ceil(6 * Math.random());
 				var rotate = Math.floor(180 * Math.random());
 				var galaxyImg = document.createElement("IMG");

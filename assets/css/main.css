@@ -2878,14 +2878,14 @@ time {
   .person-card {
     padding: 18px;
   }
-
+/* 
   .page-section:first-child,
   .project-page-list,
   .publication-list,
   .people-blocks,
   .profile-blocks {
     margin-top: 24px;
-  }
+  } */
 
   .page-section__heading h2 {
     font-size: 1.45rem;

@@ -13,6 +13,9 @@
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var current = 0;
   var timer = null;
+  var wheelLocked = false;
+  var wheelThreshold = 24;
+  var wheelCooldown = 720;
 
   if (slides.length <= 1) {
     return;
@@ -78,6 +81,26 @@
       startTimer();
     });
   });
+
+  slider.addEventListener("wheel", function (event) {
+    if (Math.abs(event.deltaY) < wheelThreshold || Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (wheelLocked) {
+      return;
+    }
+
+    wheelLocked = true;
+    setSlide(current + (event.deltaY > 0 ? 1 : -1));
+    startTimer();
+
+    window.setTimeout(function () {
+      wheelLocked = false;
+    }, wheelCooldown);
+  }, { passive: false });
 
   slider.addEventListener("focusin", stopTimer);
   slider.addEventListener("focusout", startTimer);

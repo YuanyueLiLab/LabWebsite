@@ -60,26 +60,6 @@
     <div class="page-container profile-content-layout">
       {{ if or .Params.interests .Params.education.courses .Params.user_groups $email }}
         <aside class="profile-side" aria-label="{{ .Title }} details">
-          {{ if or .Params.user_groups $email }}
-            <section class="profile-panel">
-              <h2>Snapshot</h2>
-              <dl class="profile-snapshot">
-                {{ with .Params.user_groups }}
-                  <div>
-                    <dt>Group</dt>
-                    <dd>{{ delimit . ", " }}</dd>
-                  </div>
-                {{ end }}
-                {{ with $email }}
-                  <div>
-                    <dt>Email</dt>
-                    <dd><a href="mailto:{{ . }}">{{ . }}</a></dd>
-                  </div>
-                {{ end }}
-              </dl>
-            </section>
-          {{ end }}
-
           {{ with .Params.interests }}
             <section class="profile-panel">
               <h2>Interests</h2>
