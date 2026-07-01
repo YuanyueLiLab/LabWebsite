@@ -6,6 +6,8 @@
   }
 
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var meteorTimer = null;
+  var firstMeteorTimer = null;
 
   var existingSky = document.getElementById("sky");
 
@@ -27,6 +29,10 @@
   }
 
   function createMeteor() {
+    if (document.hidden) {
+      return;
+    }
+
     var meteor = document.createElement("span");
     var angle = randomBetween(128, 148);
     var travel = randomBetween(100, 300);
@@ -49,16 +55,55 @@
   }
 
   function scheduleMeteor() {
-    window.setTimeout(function () {
+    window.clearTimeout(meteorTimer);
+
+    if (document.hidden) {
+      meteorTimer = null;
+      return;
+    }
+
+    meteorTimer = window.setTimeout(function () {
       createMeteor();
       scheduleMeteor();
     }, randomBetween(5000, 14000));
   }
 
+  function scheduleFirstMeteor() {
+    window.clearTimeout(firstMeteorTimer);
+
+    if (document.hidden) {
+      firstMeteorTimer = null;
+      return;
+    }
+
+    firstMeteorTimer = window.setTimeout(createMeteor, randomBetween(1200, 3600));
+  }
+
+  function clearMeteors() {
+    field.querySelectorAll(".sky-meteor").forEach(function (meteor) {
+      meteor.remove();
+    });
+  }
+
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      window.clearTimeout(firstMeteorTimer);
+      window.clearTimeout(meteorTimer);
+      firstMeteorTimer = null;
+      meteorTimer = null;
+      clearMeteors();
+      return;
+    }
+
+    scheduleFirstMeteor();
+    scheduleMeteor();
+  }
+
   if (!prefersReducedMotion) {
     sky.followPointer(0.008);
     sky.flyForward(120, 92);
-    window.setTimeout(createMeteor, randomBetween(1200, 3600));
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    scheduleFirstMeteor();
     scheduleMeteor();
   }
 })();

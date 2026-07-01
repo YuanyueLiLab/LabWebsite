@@ -1190,7 +1190,7 @@ time {
 
 .content-blocks {
   display: grid;
-  gap: 26px;
+  /* gap: 26px; */
 }
 
 .content-block {

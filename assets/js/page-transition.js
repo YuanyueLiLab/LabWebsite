@@ -120,6 +120,21 @@
     }
   }
 
+  function runEmbeddedScripts(container) {
+    var scripts = container.querySelectorAll("script");
+
+    scripts.forEach(function (script) {
+      var runnableScript = document.createElement("script");
+
+      Array.prototype.forEach.call(script.attributes, function (attribute) {
+        runnableScript.setAttribute(attribute.name, attribute.value);
+      });
+
+      runnableScript.text = script.text;
+      script.replaceWith(runnableScript);
+    });
+  }
+
   function finishEnter() {
     if (prefersReducedMotion) {
       root.classList.remove("is-page-entering", "is-page-leaving");
@@ -163,6 +178,7 @@
     }
 
     currentMain.replaceWith(parts.main);
+    runEmbeddedScripts(parts.main);
 
     if (shouldPush) {
       window.history.pushState({ pageTransition: true }, "", url.href);
