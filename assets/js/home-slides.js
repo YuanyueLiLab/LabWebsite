@@ -1,9 +1,11 @@
-(function () {
+function initHomeSlides() {
   var slider = document.querySelector("[data-home-slides]");
 
-  if (!slider) {
+  if (!slider || slider.dataset.homeSlidesReady === "true") {
     return;
   }
+
+  slider.dataset.homeSlidesReady = "true";
 
   var slides = Array.prototype.slice.call(slider.querySelectorAll("[data-home-slide]"));
   var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-slide-dot]"));
@@ -107,4 +109,7 @@
 
   setSlide(0);
   startTimer();
-})();
+}
+
+window.initHomeSlides = initHomeSlides;
+initHomeSlides();

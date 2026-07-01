@@ -1,9 +1,11 @@
-(function () {
+function initSiteNav() {
   var header = document.querySelector("[data-site-header]");
 
-  if (!header) {
+  if (!header || header.dataset.siteNavReady === "true") {
     return;
   }
+
+  header.dataset.siteNavReady = "true";
 
   var toggle = header.querySelector("[data-nav-toggle]");
   var nav = header.querySelector("[data-site-nav]");
@@ -38,4 +40,7 @@
       setOpen(false);
     }
   });
-})();
+}
+
+window.initSiteNav = initSiteNav;
+initSiteNav();

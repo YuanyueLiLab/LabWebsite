@@ -51,11 +51,9 @@
     {{ $stars := . | minify | fingerprint }}
     <script src="{{ $stars.RelPermalink }}" integrity="{{ $stars.Data.Integrity }}" crossorigin="anonymous" defer></script>
   {{ end }}
-  {{ if .IsHome }}
-    {{ with resources.Get "js/home-slides.js" }}
-      {{ $slides := . | minify | fingerprint }}
-      <script src="{{ $slides.RelPermalink }}" integrity="{{ $slides.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    {{ end }}
+  {{ with resources.Get "js/home-slides.js" }}
+    {{ $slides := . | minify | fingerprint }}
+    <script src="{{ $slides.RelPermalink }}" integrity="{{ $slides.Data.Integrity }}" crossorigin="anonymous" defer></script>
   {{ end }}
   {{ with resources.Get "js/site-nav.js" }}
     {{ $nav := . | minify | fingerprint }}

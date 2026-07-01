@@ -318,7 +318,7 @@ html.page-transition-enabled.is-page-leaving main {
 
 .home-hero {
   position: relative;
-  min-height: calc(100svh - 70px);
+  min-height: calc(100svh - 80px);
   display: grid;
   grid-template-rows: 1fr;
   align-items: center;
@@ -1429,9 +1429,9 @@ time {
   line-height: 1.78;
 }
 
-.page-section__body .rich-text:not(.rich-text--wide) {
+/* .page-section__body .rich-text:not(.rich-text--wide) {
   max-width: var(--readable);
-}
+} */
 
 .page-section__body .rich-text > :where(p, ul, ol) {
   margin-bottom: 1em;
