@@ -1,5 +1,5 @@
 baseURL: "https://lilab.cool/"
-title: "Yuanyue Li Lab - 李渊越实验室"
+title: "Li Lab - 李渊越实验室"
 locale: "en-us"
 # cacheDir: "/x1/github/LabWebsite/resources/_cache"
 disableKinds:
@@ -8,7 +8,7 @@ disableKinds:
 
 params:
   description: "Li Lab at Zhejiang University develops metabolomics, mass spectrometry, AI, and big-data methods for biomedical discovery."
-  lab_name: "Yuanyue Li Lab"
+  lab_name: "Li Lab"
   lab_name_zh: "李渊越实验室"
   pi_name: "Yuanyue Li"
   email: "YuanyueLi@zju.edu.cn"
