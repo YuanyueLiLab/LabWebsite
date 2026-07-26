@@ -36,7 +36,7 @@ var Sky = function Sky(layers, density) {
 	sky.dataset.allowflight = true;
 	sky.style.height = window.innerHeight + "px";
 	sky.style.setProperty("perspective-origin", centerX + "px " + centerY + "px", "important");
-	style.innerHTML = "#sky { overflow:hidden; position: relative; perspective: 100px !important; perspective-origin: 500px 500px; background: #111; background: radial-gradient(#030303, #0e1015); } #sky .layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateZ(0px); transform-origin: center center; } #sky .star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; box-shadow: 0 0 7px rgba(255,255,255,0.65); } @keyframes sky-forward-flight { 0% { opacity: 0; transform: translate3d(var(--sky-drift-start-x, 0px), var(--sky-drift-start-y, 0px), var(--sky-start-depth)); } 12% { opacity: var(--sky-layer-opacity); } 82% { opacity: var(--sky-layer-opacity); } 100% { opacity: 0; transform: translate3d(var(--sky-drift-end-x, 0px), var(--sky-drift-end-y, 0px), var(--sky-end-depth)); } } </style>";
+	style.innerHTML = "#sky { overflow:hidden; position: relative; perspective: 100px !important; perspective-origin: 500px 500px; background: #111; background: radial-gradient(#030303, #0e1015); } #sky .layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateZ(0px); transform-origin: center center; } #sky .star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; box-shadow: 0 0 7px rgba(255,255,255,0.65); animation: sky-star-twinkle var(--sky-twinkle-duration) ease-in-out var(--sky-twinkle-delay) infinite; } @keyframes sky-star-twinkle { 0%, 35%, 100% { opacity: 1; } 55%, 65% { opacity: 0; } } @keyframes sky-forward-flight { 0% { opacity: 0; transform: translate3d(var(--sky-drift-start-x, 0px), var(--sky-drift-start-y, 0px), var(--sky-start-depth)); } 12% { opacity: var(--sky-layer-opacity); } 82% { opacity: var(--sky-layer-opacity); } 100% { opacity: 0; transform: translate3d(var(--sky-drift-end-x, 0px), var(--sky-drift-end-y, 0px), var(--sky-end-depth)); } } </style>";
 
 	document.body.appendChild(sky);
 	document.head.appendChild(style);
@@ -148,7 +148,9 @@ var Sky = function Sky(layers, density) {
 			star.style.top = yVal + "px";
 			star.style.width = starSize + "px";
 			star.style.height = starSize + "px";
-
+			star.style.setProperty("--sky-twinkle-duration", (3 + (Math.random() * 5)) + "s");
+			star.style.setProperty("--sky-twinkle-delay", (-8 * Math.random()) + "s");
+			
 			if ( i%2 == 0 ) {
 				star.style.backgroundColor = blue;
 			} else {

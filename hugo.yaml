@@ -39,9 +39,12 @@ menus:
     - name: "Contact"
       url: "/contact/"
       weight: 60
+    - name: "Tools"
+      url: "https://lilab.cool/msviewer"
+      weight: 70
     - name: "Wiki (internal)"
       url: "http://wiki.lilab.cool"
-      weight: 70
+      weight: 80
 
 services:
   googleAnalytics:

@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A self-contained molecular formula, monoisotopic mass, and adduct m/z calculator."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="./app-icon.svg" type="image/svg+xml" />
+    <title>Molecular Ion Mass Calculator</title>
+    <link rel="stylesheet" href="./tool-shell.css" />
+    <link rel="stylesheet" href="./mass_calculator.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./" aria-label="Li Lab tools home">
+          <img
+            class="brand__logo"
+            src="./logo.png"
+            width="3894"
+            height="2409"
+            alt=""
+          />
+          <span class="brand__text">李渊越实验室</span>
+        </a>
+        <nav class="site-nav" aria-label="Tools">
+          <a href="./">Spectrum viewer</a>
+          <a
+            class="is-active"
+            href="./mass_calculator.html"
+            aria-current="page"
+          >
+            Mass calculator
+          </a>
+        </nav>
+      </div>
+    </header>
+    <noscript>
+      <p class="noscript-message">
+        JavaScript is required to calculate molecular and adduct masses.
+      </p>
+    </noscript>
+    <main id="main" class="page-shell">
+      <section class="page-title">
+        <h1>Molecular Ion Mass Calculator</h1>
+        <p>
+          Calculate neutral monoisotopic mass and common positive and negative
+          adduct masses from a molecular formula.
+        </p>
+      </section>
+
+      <div class="calculator">
+        <label for="formula">Molecular formula</label>
+        <div class="input-row">
+          <div class="formula-field" id="formula-field">
+            <input
+              id="formula"
+              name="formula"
+              value="C6H12O6"
+              placeholder="e.g. C6H12O6"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-describedby="formula-message"
+            />
+            <span aria-hidden="true">Formula</span>
+          </div>
+        </div>
+        <div class="field-message">
+          <p id="formula-message" role="status" aria-live="polite">
+            Results update automatically. Supports grouped formulas and
+            hydrates, such as Ca(OH)2 and CuSO4·5H2O.
+          </p>
+        </div>
+      </div>
+
+      <div class="key-results" aria-live="polite">
+        <article class="key-result">
+          <p class="key-result__label">[M+H]+</p>
+          <output
+            id="protonated"
+            for="formula"
+            aria-label="[M plus H] positive mass to charge"
+          ></output>
+          <span>m/z</span>
+        </article>
+        <article class="key-result key-result--neutral">
+          <p class="key-result__label">Neutral monoisotopic mass</p>
+          <output
+            id="neutral"
+            for="formula"
+            aria-label="Neutral monoisotopic mass in daltons"
+          ></output>
+          <span>Da</span>
+        </article>
+        <article class="key-result">
+          <p class="key-result__label">[M−H]−</p>
+          <output
+            id="deprotonated"
+            for="formula"
+            aria-label="[M minus H] negative mass to charge"
+          ></output>
+          <span>m/z</span>
+        </article>
+      </div>
+
+      <div class="adducts">
+        <div class="adducts__heading">
+          <div>
+            <p class="adducts__eyebrow">Calculated directly</p>
+            <h2>Adduct masses</h2>
+          </div>
+          <p>34 common ions · singly charged</p>
+        </div>
+        <div class="adduct-columns">
+          <div class="adduct-panel">
+            <div class="adduct-panel__header">
+              <div class="adduct-panel__title">
+                <span class="mode mode--positive" aria-hidden="true">+</span>
+                <h3>Positive ions</h3>
+              </div>
+              <span
+                class="adduct-panel__count"
+                id="positive-adduct-count"
+              >
+                21 adducts
+              </span>
+            </div>
+            <div class="adduct-table-wrap">
+              <table>
+                <caption class="sr-only">
+                  Positive adduct mass-to-charge values
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Adduct</th>
+                    <th scope="col">m/z</th>
+                  </tr>
+                </thead>
+                <tbody id="positive-adduct-rows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="adduct-panel">
+            <div class="adduct-panel__header">
+              <div class="adduct-panel__title">
+                <span class="mode mode--negative" aria-hidden="true">−</span>
+                <h3>Negative ions</h3>
+              </div>
+              <span
+                class="adduct-panel__count"
+                id="negative-adduct-count"
+              >
+                13 adducts
+              </span>
+            </div>
+            <div class="adduct-table-wrap">
+              <table>
+                <caption class="sr-only">
+                  Negative adduct mass-to-charge values
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Adduct</th>
+                    <th scope="col">m/z</th>
+                  </tr>
+                </thead>
+                <tbody id="negative-adduct-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Calculated from exact monoisotopic masses using the supplied adduct mass
+        offsets.
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const PROTON_MASS = 1.0072764665789;
+        const ELECTRON_MASS = 0.000548579909065;
+
+        const MASSES = {
+          H: 1.00782503223,
+          He: 4.00260325413,
+          Li: 7.0160034366,
+          Be: 9.012183065,
+          B: 11.00930536,
+          C: 12,
+          N: 14.00307400443,
+          O: 15.99491461957,
+          F: 18.99840316273,
+          Ne: 19.9924401762,
+          Na: 22.989769282,
+          Mg: 23.985041697,
+          Al: 26.98153853,
+          Si: 27.97692653465,
+          P: 30.97376199842,
+          S: 31.9720711744,
+          Cl: 34.968852682,
+          Ar: 39.9623831237,
+          K: 38.9637064864,
+          Ca: 39.962590863,
+          Sc: 44.95590828,
+          Ti: 47.94794198,
+          V: 50.94395704,
+          Cr: 51.94050623,
+          Mn: 54.93804391,
+          Fe: 55.93493633,
+          Co: 58.93319429,
+          Ni: 57.93534241,
+          Cu: 62.92959772,
+          Zn: 63.92914201,
+          Ga: 68.9255735,
+          Ge: 73.921177761,
+          As: 74.92159457,
+          Se: 79.9165218,
+          Br: 78.9183376,
+          Kr: 83.9114977282,
+          Rb: 84.9117897379,
+          Sr: 87.9056125,
+          Y: 88.9058403,
+          Zr: 89.9046977,
+          Nb: 92.906373,
+          Mo: 97.90540482,
+          Ru: 101.9043441,
+          Rh: 102.905498,
+          Pd: 105.9034804,
+          Ag: 106.9050916,
+          Cd: 113.90336509,
+          In: 114.903878776,
+          Sn: 119.90220163,
+          Sb: 120.903812,
+          Te: 129.906222748,
+          I: 126.9044719,
+          Xe: 131.9041550856,
+          Cs: 132.905451961,
+          Ba: 137.905247,
+          La: 138.9063563,
+          Ce: 139.9054431,
+          Pr: 140.9076576,
+          Nd: 141.907729,
+          Sm: 151.9197397,
+          Eu: 152.921238,
+          Gd: 157.9241123,
+          Tb: 158.9253547,
+          Dy: 163.9291819,
+          Ho: 164.9303288,
+          Er: 165.9302995,
+          Tm: 168.9342179,
+          Yb: 173.9388664,
+          Lu: 174.9407752,
+          Hf: 179.946557,
+          Ta: 180.9479958,
+          W: 183.95093092,
+          Re: 186.9557501,
+          Os: 191.961477,
+          Ir: 192.9629216,
+          Pt: 194.9647917,
+          Au: 196.96656879,
+          Hg: 201.9706434,
+          Tl: 204.9744278,
+          Pb: 207.9766525,
+          Bi: 208.9803991,
+          Th: 232.0380558,
+          U: 238.0507884,
+        };
+
+        const SUBSCRIPT_DIGITS = {
+          "₀": "0",
+          "₁": "1",
+          "₂": "2",
+          "₃": "3",
+          "₄": "4",
+          "₅": "5",
+          "₆": "6",
+          "₇": "7",
+          "₈": "8",
+          "₉": "9",
+        };
+
+        const ADDUCTS = [
+          ["[M+H]+", "Positive", 1, PROTON_MASS],
+          ["[M+H-H2O]+", "Positive", 1, -17.003288217],
+          ["[M+NH4]+", "Positive", 1, 18.033823],
+          ["[M+Na]+", "Positive", 1, 22.989218],
+          ["[M+CH3OH+H]+", "Positive", 1, 33.033489],
+          ["[M+K]+", "Positive", 1, 38.963158],
+          ["[M+ACN+H]+", "Positive", 1, 42.033823],
+          ["[M+2Na-H]+", "Positive", 1, 44.97116],
+          ["[M+IsoProp+H]+", "Positive", 1, 61.064791344],
+          ["[M+ACN+Na]+", "Positive", 1, 64.015765],
+          ["[M+2K-H]+", "Positive", 1, 76.91904],
+          ["[M+DMSO+H]+", "Positive", 1, 79.02122],
+          ["[M+2ACN+H]+", "Positive", 1, 83.06037],
+          ["[M+IsoProp+Na]+", "Positive", 1, 83.046736],
+          ["[M]+", "Positive", 1, -ELECTRON_MASS],
+          ["[2M+H]+", "Positive", 2, PROTON_MASS],
+          ["[2M+NH4]+", "Positive", 2, 18.033823],
+          ["[2M+Na]+", "Positive", 2, 22.989218],
+          ["[2M+K]+", "Positive", 2, 38.963158],
+          ["[2M+ACN+H]+", "Positive", 2, 42.033823],
+          ["[2M+ACN+Na]+", "Positive", 2, 64.015765],
+          ["[M-H2O-H]-", "Negative", 1, -19.017841151],
+          ["[M-H]-", "Negative", 1, -PROTON_MASS],
+          ["[M+Na-2H]-", "Negative", 1, 20.974666],
+          ["[M+Cl]-", "Negative", 1, 34.969402],
+          ["[M+K-2H]-", "Negative", 1, 36.948606],
+          ["[M+FA-H]-", "Negative", 1, 44.998201],
+          ["[M+Hac-H]-", "Negative", 1, 59.013851],
+          ["[M+Br]-", "Negative", 1, 78.918885],
+          ["[M+TFA-H]-", "Negative", 1, 112.985586],
+          ["[2M-H]-", "Negative", 2, -PROTON_MASS],
+          ["[2M+FA-H]-", "Negative", 2, 44.998201],
+          ["[2M+Hac-H]-", "Negative", 2, 59.013851],
+          ["[3M-H]-", "Negative", 3, -PROTON_MASS],
+        ];
+
+        const formulaInput = document.getElementById("formula");
+        const formulaField = document.getElementById("formula-field");
+        const message = document.getElementById("formula-message");
+        const neutralOutput = document.getElementById("neutral");
+        const protonatedOutput = document.getElementById("protonated");
+        const deprotonatedOutput = document.getElementById("deprotonated");
+        const positiveAdductRows = document.getElementById(
+          "positive-adduct-rows",
+        );
+        const negativeAdductRows = document.getElementById(
+          "negative-adduct-rows",
+        );
+        const positiveAdductCount = document.getElementById(
+          "positive-adduct-count",
+        );
+        const negativeAdductCount = document.getElementById(
+          "negative-adduct-count",
+        );
+
+        function normalizeFormula(value) {
+          return value
+            .trim()
+            .replace(/[₀-₉]/g, (digit) => SUBSCRIPT_DIGITS[digit])
+            .replace(/\s+/g, "");
+        }
+
+        function parseFormula(value) {
+          const formula = normalizeFormula(value);
+          if (!formula) throw new Error("Enter a molecular formula.");
+
+          const parts = formula.split(/[·.]/);
+          if (parts.some((part) => !part)) {
+            throw new Error("Check the hydrate separator in the formula.");
+          }
+
+          let totalMass = 0;
+
+          for (const originalPart of parts) {
+            let part = originalPart;
+            let coefficient = 1;
+            const coefficientMatch = part.match(/^(\d+)(?=[A-Z[(])/);
+
+            if (coefficientMatch) {
+              coefficient = Number(coefficientMatch[1]);
+              part = part.slice(coefficientMatch[1].length);
+            }
+
+            if (
+              !Number.isSafeInteger(coefficient) ||
+              coefficient < 1 ||
+              coefficient > 1000000
+            ) {
+              throw new Error(
+                "Formula coefficients must be between 1 and 1,000,000.",
+              );
+            }
+
+            let cursor = 0;
+
+            function readCount() {
+              const start = cursor;
+              while (cursor < part.length && /\d/.test(part[cursor])) cursor++;
+              if (start === cursor) return 1;
+
+              const count = Number(part.slice(start, cursor));
+              if (
+                !Number.isSafeInteger(count) ||
+                count < 1 ||
+                count > 1000000
+              ) {
+                throw new Error(
+                  "Element counts must be between 1 and 1,000,000.",
+                );
+              }
+              return count;
+            }
+
+            function readGroup(closing) {
+              let groupMass = 0;
+              let hasContent = false;
+
+              while (cursor < part.length) {
+                const character = part[cursor];
+
+                if (character === ")" || character === "]") {
+                  if (!closing || character !== closing) {
+                    throw new Error(
+                      "The formula contains mismatched brackets.",
+                    );
+                  }
+                  break;
+                }
+
+                if (character === "(" || character === "[") {
+                  hasContent = true;
+                  const expectedClosing = character === "(" ? ")" : "]";
+                  cursor++;
+                  const nestedMass = readGroup(expectedClosing);
+                  if (part[cursor] !== expectedClosing) {
+                    throw new Error("The formula contains an unclosed bracket.");
+                  }
+                  cursor++;
+                  groupMass += nestedMass * readCount();
+                  continue;
+                }
+
+                if (!/[A-Z]/.test(character)) {
+                  throw new Error(
+                    `Unexpected character “${character}” in the formula.`,
+                  );
+                }
+
+                hasContent = true;
+                let symbol = character;
+                cursor++;
+                if (cursor < part.length && /[a-z]/.test(part[cursor])) {
+                  symbol += part[cursor];
+                  cursor++;
+                }
+
+                if (MASSES[symbol] === undefined) {
+                  throw new Error(`Element “${symbol}” is not supported.`);
+                }
+                groupMass += MASSES[symbol] * readCount();
+              }
+
+              if (!hasContent) throw new Error("Empty groups are not allowed.");
+              return groupMass;
+            }
+
+            const partMass = readGroup();
+            if (cursor !== part.length) {
+              throw new Error(
+                "The formula contains an unexpected closing bracket.",
+              );
+            }
+            totalMass += partMass * coefficient;
+          }
+
+          if (!Number.isFinite(totalMass) || totalMass <= PROTON_MASS) {
+            throw new Error("Enter a valid molecular formula.");
+          }
+
+          return { formula, neutralMass: totalMass };
+        }
+
+        function formatMass(value) {
+          return value.toFixed(6);
+        }
+
+        function clearResults() {
+          neutralOutput.value = "—";
+          protonatedOutput.value = "—";
+          deprotonatedOutput.value = "—";
+          positiveAdductRows.replaceChildren();
+          negativeAdductRows.replaceChildren();
+          positiveAdductCount.textContent = "No results";
+          negativeAdductCount.textContent = "No results";
+        }
+
+        function render(value) {
+          const result = parseFormula(value);
+          neutralOutput.value = formatMass(result.neutralMass);
+          protonatedOutput.value = formatMass(
+            result.neutralMass + PROTON_MASS,
+          );
+          deprotonatedOutput.value = formatMass(
+            result.neutralMass - PROTON_MASS,
+          );
+
+          function renderAdductRows(target, modeToRender) {
+            target.replaceChildren(
+              ...ADDUCTS.filter(([, mode]) => mode === modeToRender).map(
+                ([label, , multiplier, offset]) => {
+                  const row = document.createElement("tr");
+
+                  const labelCell = document.createElement("th");
+                  labelCell.scope = "row";
+                  labelCell.textContent = label;
+
+                  const massCell = document.createElement("td");
+                  const output = document.createElement("output");
+                  output.setAttribute("for", "formula");
+                  output.value = formatMass(
+                    result.neutralMass * multiplier + offset,
+                  );
+                  massCell.append(output);
+
+                  row.append(labelCell, massCell);
+                  return row;
+                },
+              ),
+            );
+          }
+
+          renderAdductRows(positiveAdductRows, "Positive");
+          renderAdductRows(negativeAdductRows, "Negative");
+          positiveAdductCount.textContent = "21 adducts";
+          negativeAdductCount.textContent = "13 adducts";
+
+          formulaField.classList.remove("formula-field--error");
+          formulaInput.removeAttribute("aria-invalid");
+          message.classList.remove("field-message--error");
+          message.textContent =
+            "Results update automatically. Supports grouped formulas and hydrates, such as Ca(OH)2 and CuSO4·5H2O.";
+        }
+
+        formulaInput.addEventListener("input", () => {
+          try {
+            render(formulaInput.value);
+          } catch (error) {
+            clearResults();
+            formulaField.classList.add("formula-field--error");
+            formulaInput.setAttribute("aria-invalid", "true");
+            message.classList.add("field-message--error");
+            message.textContent =
+              error instanceof Error
+                ? error.message
+                : "Unable to parse this formula.";
+          }
+        });
+
+        render(formulaInput.value);
+      })();
+    </script>
+  </body>
+</html>
