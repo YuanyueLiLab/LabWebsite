@@ -2,7 +2,8 @@
   <div class="site-header__inner">
     <a class="brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} home">
       {{ with resources.Get "media/logo.png" }}
-        <img class="brand__logo" src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ site.Title }}">
+        {{ $logo := .Resize "320x png" }}
+        <img class="brand__logo" src="{{ $logo.RelPermalink }}" width="{{ $logo.Width }}" height="{{ $logo.Height }}" decoding="async" alt="{{ site.Title }}">
         <span class="brand__text">{{ site.Params.lab_name_zh | default "李渊越实验室" }}</span>
       {{ else }}
         <span class="brand__fallback">

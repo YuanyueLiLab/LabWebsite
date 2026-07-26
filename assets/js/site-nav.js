@@ -1,7 +1,11 @@
 function initSiteNav() {
+  if (typeof window.destroySiteNav === "function") {
+    window.destroySiteNav();
+  }
+
   var header = document.querySelector("[data-site-header]");
 
-  if (!header || header.dataset.siteNavReady === "true") {
+  if (!header) {
     return;
   }
 
@@ -9,6 +13,8 @@ function initSiteNav() {
 
   var toggle = header.querySelector("[data-nav-toggle]");
   var nav = header.querySelector("[data-site-nav]");
+  var desktopMedia = window.matchMedia("(min-width: 761px)");
+  var destroyed = false;
 
   if (!toggle || !nav) {
     return;
@@ -19,27 +25,67 @@ function initSiteNav() {
     toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
-  toggle.addEventListener("click", function () {
+  function handleToggleClick() {
     setOpen(!header.classList.contains("is-nav-open"));
-  });
+  }
 
-  nav.addEventListener("click", function (event) {
+  function handleNavClick(event) {
     if (event.target.closest("a")) {
       setOpen(false);
     }
-  });
+  }
 
-  document.addEventListener("keydown", function (event) {
+  function handleKeydown(event) {
     if (event.key === "Escape") {
       setOpen(false);
     }
-  });
+  }
 
-  window.addEventListener("resize", function () {
-    if (window.matchMedia("(min-width: 761px)").matches) {
+  function handleDesktopChange(event) {
+    if (event.matches) {
       setOpen(false);
     }
-  });
+  }
+
+  function destroySiteNav() {
+    if (destroyed) {
+      return;
+    }
+
+    destroyed = true;
+    toggle.removeEventListener("click", handleToggleClick);
+    nav.removeEventListener("click", handleNavClick);
+    document.removeEventListener("keydown", handleKeydown);
+
+    if (typeof desktopMedia.removeEventListener === "function") {
+      desktopMedia.removeEventListener("change", handleDesktopChange);
+    } else {
+      desktopMedia.removeListener(handleDesktopChange);
+    }
+
+    header.dataset.siteNavReady = "false";
+
+    if (window.destroySiteNav === destroySiteNav) {
+      window.destroySiteNav = null;
+    }
+
+    header = null;
+    toggle = null;
+    nav = null;
+    desktopMedia = null;
+  }
+
+  toggle.addEventListener("click", handleToggleClick);
+  nav.addEventListener("click", handleNavClick);
+  document.addEventListener("keydown", handleKeydown);
+
+  if (typeof desktopMedia.addEventListener === "function") {
+    desktopMedia.addEventListener("change", handleDesktopChange);
+  } else {
+    desktopMedia.addListener(handleDesktopChange);
+  }
+
+  window.destroySiteNav = destroySiteNav;
 }
 
 window.initSiteNav = initSiteNav;

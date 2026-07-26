@@ -38,9 +38,9 @@
                     {{ $person := . }}
                     <article class="people-person">
                       {{ with .Resources.GetMatch "avatar.*" }}
-                        {{ $avatar := .Fill "270x270 Center webp q84" }}
+                        {{ $avatar := .Fill "192x192 Center webp q82" }}
                         <a class="people-person__avatar" href="{{ $person.RelPermalink }}">
-                          <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="{{ $person.Title }}">
+                          <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" loading="lazy" decoding="async" alt="{{ $person.Title }}">
                         </a>
                       {{ end }}
                       <div class="people-person__body">

@@ -294,7 +294,6 @@ html.page-transition-enabled main {
     opacity 520ms ease,
     transform 520ms ease,
     visibility 520ms ease;
-  will-change: opacity, transform;
 }
 
 html.page-transition-enabled.is-page-entering main,
@@ -303,6 +302,7 @@ html.page-transition-enabled.is-page-leaving main {
   visibility: hidden;
   pointer-events: none;
   transform: translateY(18px);
+  will-change: opacity, transform;
 }
 
 .site-stars {
@@ -353,6 +353,7 @@ html.page-transition-enabled.is-page-leaving main {
   width: 100%;
   height: 100% !important;
   z-index: 1;
+  contain: layout paint style;
   background:
     radial-gradient(circle at 50% 50%, #111827 0%, #05070d 52%, #000 100%) !important;
 }
@@ -3095,5 +3096,22 @@ time {
 
   .profile-hero__visual {
     width: min(68vw, 170px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  main {
+    scroll-behavior: auto;
+  }
+
+  html.page-transition-enabled main,
+  .home-slide {
+    transition: none;
+  }
+
+  .sky-meteor {
+    display: none;
+    animation: none;
   }
 }

@@ -38,7 +38,7 @@
               {{ with $projectImage }}
                 {{ $img := .Resize "540x webp q82" }}
                 <a class="project-card__image" href="{{ cond $isProjectExternal $projectHref ($projectHref | relURL) }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
-                  <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}">
+                  <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" loading="lazy" decoding="async" alt="{{ $page.Title }}">
                 </a>
               {{ end }}
               <div class="project-card__body">
@@ -88,7 +88,7 @@
             <article class="list-card">
               {{ with or (.Resources.GetMatch "featured.*") (.Resources.GetMatch "feature.*") }}
                 {{ $img := .Fill "560x320 Center webp q82" }}
-                <a href="{{ $page.RelPermalink }}"><img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt=""></a>
+                <a href="{{ $page.RelPermalink }}"><img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" loading="lazy" decoding="async" alt=""></a>
               {{ end }}
               <div>
                 {{ if not .Date.IsZero }}<time>{{ .Date.Format "Jan 2, 2006" }}</time>{{ end }}

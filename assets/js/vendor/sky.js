@@ -15,11 +15,13 @@ var Sky = function Sky(layers, density) {
 	var centerX = window.innerWidth / 2;
 	var centerY = window.innerHeight / 2;
 	var style = document.createElement("STYLE");
-	var layerNodes;
+	var layerNodes = [];
 	var galaxyBasePath = "/images/skyjs/";
 	var breatheGeneration = 0;
 	var breatheTimers = [];
 	var destroyed = false;
+	var paused = false;
+	var skySize = null;
 	var pointerFrame = null;
 	var pointerMoveHandler;
 	var pointerResizeHandler;
@@ -29,7 +31,8 @@ var Sky = function Sky(layers, density) {
 	var pointerTargetX = centerX;
 	var pointerTargetY = centerY;
 	var pointerSmoothing = 0.012;
-	var galaxyFrequency = 25;
+	var pointerEpsilon = 0.35;
+	var galaxyFrequency = 36;
 
 	var sky = document.createElement("DIV");
 	sky.id = "sky";
@@ -38,12 +41,13 @@ var Sky = function Sky(layers, density) {
 	sky.dataset.allowflight = true;
 	sky.style.height = window.innerHeight + "px";
 	sky.style.setProperty("perspective-origin", centerX + "px " + centerY + "px", "important");
-	style.innerHTML = "#sky { overflow:hidden; position: relative; perspective: 100px !important; perspective-origin: 500px 500px; background: #111; background: radial-gradient(#030303, #0e1015); } #sky .layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateZ(0px); transform-origin: center center; } #sky .star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; box-shadow: 0 0 7px rgba(255,255,255,0.65); } @keyframes sky-forward-flight { 0% { opacity: 0; transform: translate3d(var(--sky-drift-start-x, 0px), var(--sky-drift-start-y, 0px), var(--sky-start-depth)); } 12% { opacity: var(--sky-layer-opacity); } 82% { opacity: var(--sky-layer-opacity); } 100% { opacity: 0; transform: translate3d(var(--sky-drift-end-x, 0px), var(--sky-drift-end-y, 0px), var(--sky-end-depth)); } } </style>";
+	style.innerHTML = "#sky { overflow:hidden; position: relative; perspective: 100px !important; perspective-origin: 500px 500px; background: #111; background: radial-gradient(#030303, #0e1015); } #sky .layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateZ(0px); transform-origin: center center; } #sky.is-paused .layer { animation-play-state: paused !important; } #sky .star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; box-shadow: 0 0 7px rgba(255,255,255,0.65); } @keyframes sky-forward-flight { 0% { opacity: 0; transform: translate3d(var(--sky-drift-start-x, 0px), var(--sky-drift-start-y, 0px), var(--sky-start-depth)); } 12% { opacity: var(--sky-layer-opacity); } 82% { opacity: var(--sky-layer-opacity); } 100% { opacity: 0; transform: translate3d(var(--sky-drift-end-x, 0px), var(--sky-drift-end-y, 0px), var(--sky-end-depth)); } }";
 	document.body.appendChild(sky);
 	document.head.appendChild(style);
 
-	var initialSkySize = getSkySize();
+	var initialSkySize = measureSkySize();
 	var starsScale = getStarsScale( initialSkySize.width, initialSkySize.height );
+	var layerFragment = document.createDocumentFragment();
 
 	for (var i = 0; i < layers; i++ ) {
 		var newLayer = document.createElement("DIV");
@@ -57,10 +61,11 @@ var Sky = function Sky(layers, density) {
 		newLayer.style.setProperty("--sky-layer-opacity", op);
 		newLayer.dataset.stars = starsCount;
 		newLayer.dataset.zoom = 1 + 2 * Math.pow(1.5, i);
-		sky.appendChild(newLayer);
+		layerNodes.push(newLayer);
+		layerFragment.appendChild(newLayer);
 	}
 
-	layerNodes = sky.getElementsByClassName("layer");
+	sky.appendChild(layerFragment);
 
 	function clamp( value, min, max ) {
 		return Math.max( min, Math.min( value, max ) );
@@ -70,17 +75,23 @@ var Sky = function Sky(layers, density) {
 		var referenceArea = 1440 * 900;
 		var pageArea = Math.max( width, 1 ) * Math.max( height, 1 );
 
-		return clamp( pageArea / referenceArea, 0.25, 2.5 );
+		return clamp( pageArea / referenceArea, 0.25, 1.5 );
 	}
 
-	function getSkySize() {
+	function measureSkySize() {
 		var rect = sky.getBoundingClientRect();
 
-		return {
+		skySize = {
 			rect: rect,
 			width: rect.width || window.innerWidth,
 			height: rect.height || window.innerHeight
 		};
+
+		return skySize;
+	}
+
+	function getSkySize() {
+		return skySize || measureSkySize();
 	}
 
 	function clearBreatheTimers() {
@@ -151,7 +162,7 @@ var Sky = function Sky(layers, density) {
 	}
 
 	function resetTravelTargetToCenter() {
-		var size = getSkySize();
+		var size = measureSkySize();
 
 		pointerTargetX = size.width / 2;
 		pointerTargetY = size.height / 2;
@@ -160,22 +171,42 @@ var Sky = function Sky(layers, density) {
 		setTravelOrigin( pointerCurrentX, pointerCurrentY );
 	}
 
+	function startPointerAnimation() {
+		if ( destroyed || paused || !pointerTracking || pointerFrame !== null ) {
+			return;
+		}
+
+		pointerFrame = window.requestAnimationFrame( animateTravelOrigin );
+	}
+
 	function animateTravelOrigin() {
-		if ( destroyed || !pointerTracking || !sky ) {
+		if ( destroyed || paused || !pointerTracking || !sky ) {
 			pointerFrame = null;
 			return;
 		}
 
-		pointerCurrentX += (pointerTargetX - pointerCurrentX) * pointerSmoothing;
-		pointerCurrentY += (pointerTargetY - pointerCurrentY) * pointerSmoothing;
+		var deltaX = pointerTargetX - pointerCurrentX;
+		var deltaY = pointerTargetY - pointerCurrentY;
+
+		if ( Math.abs( deltaX ) <= pointerEpsilon && Math.abs( deltaY ) <= pointerEpsilon ) {
+			pointerCurrentX = pointerTargetX;
+			pointerCurrentY = pointerTargetY;
+			setTravelOrigin( pointerCurrentX, pointerCurrentY );
+			pointerFrame = null;
+			return;
+		}
+
+		pointerCurrentX += deltaX * pointerSmoothing;
+		pointerCurrentY += deltaY * pointerSmoothing;
 		setTravelOrigin( pointerCurrentX, pointerCurrentY );
 		pointerFrame = window.requestAnimationFrame( animateTravelOrigin );
 	}
 
 	function initStars( layer ) {
-		var starsCount = layer.dataset.stars;
+		var starsCount = Number( layer.dataset.stars );
 		var winWidth = window.innerWidth;
 		var winHeight = window.innerHeight;
+		var starsFragment = document.createDocumentFragment();
 
 		for ( var i = 0; i < starsCount; i++ ) {
 			var star = document.createElement("DIV");
@@ -221,8 +252,10 @@ var Sky = function Sky(layers, density) {
 				star.style.transform = "rotate(" + rotate + "deg)";
 			}
 
-			layer.appendChild( star );
+			starsFragment.appendChild( star );
 		}
+
+		layer.appendChild( starsFragment );
 	};
 
 	this.breathe = function breathe( speed ) {
@@ -297,7 +330,6 @@ var Sky = function Sky(layers, density) {
 			layer.style.setProperty("--sky-end-depth", endDepth + "px");
 			layer.style.WebkitAnimation = "sky-forward-flight " + speed + "ms linear -" + delay + "ms infinite";
 			layer.style.animation = "sky-forward-flight " + speed + "ms linear -" + delay + "ms infinite";
-			layer.style.willChange = "transform, opacity";
 		}
 	};
 
@@ -342,6 +374,7 @@ var Sky = function Sky(layers, density) {
 		pointerMoveHandler = function ( event ) {
 			if ( !destroyed ) {
 				setTravelTargetFromPoint( event.clientX, event.clientY );
+				startPointerAnimation();
 			}
 		};
 		pointerResizeHandler = function () {
@@ -352,7 +385,6 @@ var Sky = function Sky(layers, density) {
 
 		window.addEventListener( "pointermove", pointerMoveHandler, { passive: true } );
 		window.addEventListener( "resize", pointerResizeHandler );
-		animateTravelOrigin();
 	};
 
 	function stopPointer( resetOrigin ) {
@@ -381,6 +413,22 @@ var Sky = function Sky(layers, density) {
 
 	this.followPointer.stop = function () {
 		stopPointer( true );
+	};
+
+	this.setPaused = function setPaused( shouldPause ) {
+		if ( destroyed || !sky ) {
+			return;
+		}
+
+		paused = Boolean( shouldPause );
+		sky.classList.toggle( "is-paused", paused );
+
+		if ( paused && pointerFrame !== null ) {
+			window.cancelAnimationFrame( pointerFrame );
+			pointerFrame = null;
+		} else if ( !paused ) {
+			startPointerAnimation();
+		}
 	};
 
 	this.zoomIn = function zoomIn( speed, zoom ) {

@@ -120,6 +120,26 @@
     }
   }
 
+  function runPageCleanups() {
+    var callbacks = window.__pageCleanupCallbacks || [];
+
+    window.__pageCleanupCallbacks = [];
+
+    for (var index = callbacks.length - 1; index >= 0; index -= 1) {
+      try {
+        callbacks[index]();
+      } catch (error) {
+        // A failed optional cleanup must not prevent navigation.
+      }
+    }
+
+    ["destroyHomeSlides", "destroySiteNav"].forEach(function (cleanupName) {
+      if (typeof window[cleanupName] === "function") {
+        window[cleanupName]();
+      }
+    });
+  }
+
   function runEmbeddedScripts(container) {
     var scripts = container.querySelectorAll("script");
 
@@ -163,6 +183,7 @@
       return;
     }
 
+    runPageCleanups();
     document.body.className = parts.bodyClass;
 
     if (parts.title) {

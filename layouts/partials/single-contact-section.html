@@ -86,10 +86,39 @@
             var longitude = {{ $lon }};
             var latitude = {{ $lat }};
             var mapName = {{ $mapName | jsonify | safeJS }};
+            var container = document.getElementById(mapId);
+            var map = null;
+            var marker = null;
+            var observer = null;
+            var destroyed = false;
+
+            function removeQueuedInit() {
+              var queue = window.__amapInitQueue;
+
+              if (!Array.isArray(queue)) {
+                return;
+              }
+
+              for (var index = queue.length - 1; index >= 0; index -= 1) {
+                if (queue[index] === initMap) {
+                  queue.splice(index, 1);
+                }
+              }
+            }
+
+            function markMapError() {
+              if (!destroyed && container && container.isConnected) {
+                container.dataset.mapError = "true";
+              }
+            }
 
             function initMap() {
-              var container = document.getElementById(mapId);
-              if (!container || container.dataset.mapReady === "true") {
+              if (
+                destroyed ||
+                !container ||
+                !container.isConnected ||
+                container.dataset.mapReady === "true"
+              ) {
                 return;
               }
 
@@ -97,36 +126,80 @@
                 return;
               }
 
-              container.dataset.mapReady = "true";
+              removeQueuedInit();
 
-              var position = new AMap.LngLat(longitude, latitude);
-              var map = new AMap.Map(mapId, {
-                zoom: 16,
-                center: position,
-                viewMode: "2D",
-                resizeEnable: true
+              try {
+                var position = new window.AMap.LngLat(longitude, latitude);
+                map = new window.AMap.Map(container, {
+                  zoom: 16,
+                  center: position,
+                  viewMode: "2D",
+                  resizeEnable: true
+                });
+
+                marker = new window.AMap.Marker({
+                  position: position,
+                  title: mapName,
+                  content: '<div class="contact-map-marker" aria-hidden="true"></div>',
+                  offset: new window.AMap.Pixel(-14, -34),
+                  zIndex: 120
+                });
+
+                map.add(marker);
+                map.setCenter(position);
+                container.dataset.mapReady = "true";
+                delete container.dataset.mapError;
+              } catch (error) {
+                if (map && typeof map.destroy === "function") {
+                  try {
+                    map.destroy();
+                  } catch (destroyError) {}
+                }
+
+                map = null;
+                marker = null;
+                markMapError();
+              }
+            }
+
+            function settleMapLoad(didLoad) {
+              window.__amapScriptLoading = false;
+
+              var queue = Array.isArray(window.__amapInitQueue)
+                ? window.__amapInitQueue
+                : [];
+              window.__amapInitQueue = [];
+
+              queue.forEach(function (callback) {
+                if (typeof callback !== "function") {
+                  return;
+                }
+
+                if (didLoad) {
+                  callback();
+                } else if (typeof callback.__amapOnError === "function") {
+                  callback.__amapOnError();
+                }
               });
-
-              var marker = new AMap.Marker({
-                position: position,
-                title: mapName,
-                content: '<div class="contact-map-marker" aria-hidden="true"></div>',
-                offset: new AMap.Pixel(-14, -34),
-                zIndex: 120
-              });
-
-              map.add(marker);
-              map.setCenter(position);
             }
 
             function loadMap() {
+              if (destroyed) {
+                return;
+              }
+
               if (window.AMap && window.AMap.Map) {
                 initMap();
                 return;
               }
 
-              window.__amapInitQueue = window.__amapInitQueue || [];
-              window.__amapInitQueue.push(initMap);
+              if (!Array.isArray(window.__amapInitQueue)) {
+                window.__amapInitQueue = [];
+              }
+
+              if (window.__amapInitQueue.indexOf(initMap) === -1) {
+                window.__amapInitQueue.push(initMap);
+              }
 
               if (window.__amapScriptLoading) {
                 return;
@@ -139,25 +212,81 @@
               script.src = "https://webapi.amap.com/maps?v=2.0&key=" + encodeURIComponent(key);
               script.async = true;
               script.onload = function () {
-                window.__amapScriptLoading = false;
-                var queue = window.__amapInitQueue || [];
-                window.__amapInitQueue = [];
-                queue.forEach(function (callback) {
-                  callback();
-                });
+                var didLoad = Boolean(window.AMap && window.AMap.Map);
+                script.onload = null;
+                script.onerror = null;
+                settleMapLoad(didLoad);
+
+                if (!didLoad) {
+                  script.remove();
+                }
               };
               script.onerror = function () {
-                window.__amapScriptLoading = false;
-                var container = document.getElementById(mapId);
-                if (container) {
-                  container.dataset.mapError = "true";
-                }
+                script.onload = null;
+                script.onerror = null;
+                settleMapLoad(false);
+                script.remove();
               };
               document.head.appendChild(script);
             }
 
-            if (document.readyState === "loading") {
-              document.addEventListener("DOMContentLoaded", loadMap, { once: true });
+            function destroyMap() {
+              if (destroyed) {
+                return;
+              }
+
+              destroyed = true;
+              removeQueuedInit();
+              initMap.__amapOnError = null;
+
+              if (observer) {
+                observer.disconnect();
+                observer = null;
+              }
+
+              if (map && marker && typeof map.remove === "function") {
+                try {
+                  map.remove(marker);
+                } catch (error) {}
+              }
+
+              if (map && typeof map.destroy === "function") {
+                try {
+                  map.destroy();
+                } catch (error) {}
+              }
+
+              marker = null;
+              map = null;
+              container = null;
+            }
+
+            if (!container) {
+              return;
+            }
+
+            initMap.__amapOnError = markMapError;
+            window.__pageCleanupCallbacks = Array.isArray(window.__pageCleanupCallbacks)
+              ? window.__pageCleanupCallbacks
+              : [];
+            window.__pageCleanupCallbacks.push(destroyMap);
+
+            if ("IntersectionObserver" in window) {
+              observer = new IntersectionObserver(function (entries) {
+                if (destroyed || !observer) {
+                  return;
+                }
+
+                if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                  observer.disconnect();
+                  observer = null;
+                  loadMap();
+                }
+              }, {
+                rootMargin: "200px 0px",
+                threshold: 0.01
+              });
+              observer.observe(container);
             } else {
               loadMap();
             }

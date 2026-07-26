@@ -10,6 +10,16 @@
   }
 
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  var compactViewport = window.matchMedia("(max-width: 760px)").matches;
+  var constrainedDevice = (
+    compactViewport ||
+    Boolean(connection && connection.saveData) ||
+    Boolean(navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+    Boolean(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+  );
+  var skyLayers = prefersReducedMotion ? 1 : (constrainedDevice ? 2 : 3);
+  var skyDensity = prefersReducedMotion ? 2 : (constrainedDevice ? 3 : 4);
   var activeMeteors = [];
   var destroyed = false;
   var meteorTimer = null;
@@ -25,7 +35,7 @@
     }
   }
 
-  var sky = new window.Sky(4, 6);
+  var sky = new window.Sky(skyLayers, skyDensity);
   var skyNode = document.getElementById("sky");
 
   if (!skyNode) {
@@ -124,6 +134,7 @@
     }
 
     if (document.hidden) {
+      sky.setPaused(true);
       window.clearTimeout(firstMeteorTimer);
       window.clearTimeout(meteorTimer);
       firstMeteorTimer = null;
@@ -132,6 +143,7 @@
       return;
     }
 
+    sky.setPaused(false);
     scheduleFirstMeteor();
     scheduleMeteor();
   }
@@ -162,10 +174,12 @@
   window.destroyHomeStars = destroyHomeStars;
 
   if (!prefersReducedMotion) {
-    sky.followPointer(0.008);
+    if (!constrainedDevice) {
+      sky.followPointer(0.06);
+    }
+
     sky.flyForward(120, 92);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    scheduleFirstMeteor();
-    scheduleMeteor();
+    handleVisibilityChange();
   }
 })();

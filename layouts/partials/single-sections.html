@@ -22,9 +22,11 @@
               {{ $image := $page.Resources.GetMatch . }}
               <figure class="page-image">
                 {{ with $image }}
-                  <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
+                  {{ $small := .Resize "600x webp q82" }}
+                  {{ $large := .Resize "1200x webp q82" }}
+                  <img src="{{ $small.RelPermalink }}" srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 720px) calc(100vw - 68px), 600px" width="{{ $small.Width }}" height="{{ $small.Height }}" loading="lazy" decoding="async" alt="">
                 {{ else }}
-                  <img src="{{ . }}" width="600" height="240" alt="">
+                  <img src="{{ . }}" width="600" height="240" loading="lazy" decoding="async" alt="">
                 {{ end }}
               </figure>
             {{ end }}
@@ -66,7 +68,7 @@
                 {{ with .Resources.GetMatch "avatar.*" }}
                   {{ $avatar := .Fill "360x360 Center webp q82" }}
                   <a class="person-card__avatar" href="{{ $member.RelPermalink }}">
-                    <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" alt="">
+                    <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" loading="lazy" decoding="async" alt="">
                   </a>
                 {{ end }}
                 <div class="person-card__body">
@@ -118,9 +120,11 @@
             {{ $image := $page.Resources.GetMatch . }}
             <figure class="page-image">
               {{ with $image }}
-                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
+                {{ $small := .Resize "600x webp q82" }}
+                {{ $large := .Resize "1200x webp q82" }}
+                <img src="{{ $small.RelPermalink }}" srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 720px) calc(100vw - 68px), 600px" width="{{ $small.Width }}" height="{{ $small.Height }}" loading="lazy" decoding="async" alt="">
               {{ else }}
-                <img src="{{ . }}" width="600" height="240" alt="">
+                <img src="{{ . }}" width="600" height="240" loading="lazy" decoding="async" alt="">
               {{ end }}
             </figure>
           {{ end }}

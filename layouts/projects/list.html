@@ -24,8 +24,10 @@
 
           <section class="page-section page-card project-page-card{{ if not $projectImage }} project-page-card--no-image{{ end }}">
             {{ with $projectImage }}
+              {{ $small := .Fill "280x210 Center webp q82" }}
+              {{ $large := .Fill "560x420 Center webp q82" }}
               <a class="page-image project-page-card__image" href="{{ $projectLink }}"{{ if $isProjectExternal }} target="_blank" rel="noopener"{{ end }}>
-                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $page.Title }}">
+                <img src="{{ $small.RelPermalink }}" srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 980px) calc(100vw - 72px), 280px" width="{{ $small.Width }}" height="{{ $small.Height }}" loading="lazy" decoding="async" alt="{{ $page.Title }}">
               </a>
             {{ end }}
 
