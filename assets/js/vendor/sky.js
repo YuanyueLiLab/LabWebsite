@@ -4,22 +4,23 @@
  * License: MIT, see assets/js/vendor/skyjs-LICENSE.
  *
  * Local site changes: galaxy asset path, scoped layer lookup, pointer-targeted
- * forward-flight animation, decorative image alt text, and removal of per-star
- * console logging.
+ * forward-flight animation, lifecycle cleanup, decorative image alt text, and
+ * removal of per-star console logging.
  */
 var Sky = function Sky(layers, density) {
 	layers = typeof layers !== 'undefined' ? layers : 3;
 	density = typeof density !== 'undefined' ? density : 5;
 	density = density > 10 ? 10 : density;
 	density = density <= 0 ? 1 : density;
-	var that = this;
-
 	var centerX = window.innerWidth / 2;
 	var centerY = window.innerHeight / 2;
 	var style = document.createElement("STYLE");
 	var layerNodes;
 	var galaxyBasePath = "/images/skyjs/";
-	var pointerFrame;
+	var breatheGeneration = 0;
+	var breatheTimers = [];
+	var destroyed = false;
+	var pointerFrame = null;
 	var pointerMoveHandler;
 	var pointerResizeHandler;
 	var pointerTracking = false;
@@ -32,6 +33,7 @@ var Sky = function Sky(layers, density) {
 
 	var sky = document.createElement("DIV");
 	sky.id = "sky";
+	sky.__skyController = this;
 	sky.dataset.allowbreathe = true;
 	sky.dataset.allowflight = true;
 	sky.style.height = window.innerHeight + "px";
@@ -81,6 +83,42 @@ var Sky = function Sky(layers, density) {
 		};
 	}
 
+	function clearBreatheTimers() {
+		for ( var i = 0; i < breatheTimers.length; i++ ) {
+			window.clearTimeout( breatheTimers[i] );
+		}
+
+		breatheTimers = [];
+	}
+
+	function stopBreathe() {
+		breatheGeneration++;
+		clearBreatheTimers();
+
+		if ( sky ) {
+			sky.dataset.allowbreathe = false;
+		}
+	}
+
+	function scheduleBreathe( callback, layer, speed ) {
+		var generation = breatheGeneration;
+		var timer = window.setTimeout(function() {
+			var timerIndex = breatheTimers.indexOf( timer );
+
+			if ( timerIndex !== -1 ) {
+				breatheTimers.splice( timerIndex, 1 );
+			}
+
+			if ( destroyed || generation !== breatheGeneration || !sky || sky.dataset.allowbreathe === 'false' ) {
+				return;
+			}
+
+			callback( layer );
+		}, speed);
+
+		breatheTimers.push( timer );
+	}
+
 	function setTravelOrigin( x, y ) {
 		var size = getSkySize();
 		var originX = clamp( x, 0, size.width );
@@ -123,6 +161,11 @@ var Sky = function Sky(layers, density) {
 	}
 
 	function animateTravelOrigin() {
+		if ( destroyed || !pointerTracking || !sky ) {
+			pointerFrame = null;
+			return;
+		}
+
 		pointerCurrentX += (pointerTargetX - pointerCurrentX) * pointerSmoothing;
 		pointerCurrentY += (pointerTargetY - pointerCurrentY) * pointerSmoothing;
 		setTravelOrigin( pointerCurrentX, pointerCurrentY );
@@ -183,57 +226,60 @@ var Sky = function Sky(layers, density) {
 	};
 
 	this.breathe = function breathe( speed ) {
-		window.onload = (function() {
-			speed = typeof speed === 'undefined' ? 10000 : speed * 1000;
+		if ( destroyed ) {
+			return;
+		}
 
-			for ( var i = 0; i < layerNodes.length; i++ ) {
-				var layer = layerNodes[i];
-				var zoom = layer.dataset.zoom;
+		stopBreathe();
+		sky.dataset.allowbreathe = true;
+		speed = typeof speed === 'undefined' ? 10000 : speed * 1000;
 
-				layer.style.WebkitTransition = "-webkit-transform "+speed+"ms ease-in-out";
-				layer.style.MozTransition = "-moz-transform "+speed+"ms ease-in-out";
-				layer.style.MsTransition = "-ms-transform "+speed+"ms ease-in-out";
-				layer.style.OTransition = "-o-transform "+speed+"ms ease-in-out";
-				layer.style.transition = "transform "+speed+"ms ease-in-out";
+		for ( var i = 0; i < layerNodes.length; i++ ) {
+			var layer = layerNodes[i];
 
-				layer.style.WebkitTransform = "translateZ(0.1px)";
-				layer.style.MozTransform = "translateZ(0.1px)";
-				layer.style.MsTransform = "translateZ(0.1px)";
-				layer.style.OTransform = "translateZ(0.1px)";
-				layer.style.transform = "translateZ(0.1px)"; // Rendering bug fix -- apparently an initial nonzero value is needed to jumpstart the rendering engine
+			layer.style.WebkitTransition = "-webkit-transform "+speed+"ms ease-in-out";
+			layer.style.MozTransition = "-moz-transform "+speed+"ms ease-in-out";
+			layer.style.MsTransition = "-ms-transform "+speed+"ms ease-in-out";
+			layer.style.OTransition = "-o-transform "+speed+"ms ease-in-out";
+			layer.style.transition = "transform "+speed+"ms ease-in-out";
 
-				breatheIn( layer );
-			}
+			layer.style.WebkitTransform = "translateZ(0.1px)";
+			layer.style.MozTransform = "translateZ(0.1px)";
+			layer.style.MsTransform = "translateZ(0.1px)";
+			layer.style.OTransform = "translateZ(0.1px)";
+			layer.style.transform = "translateZ(0.1px)"; // Rendering bug fix -- apparently an initial nonzero value is needed to jumpstart the rendering engine
 
-			function breatheIn( layer ) {
-				if ( sky.dataset.allowbreathe === 'false' ) { return; }
-				
-				layer.style.transform = "translateZ(" + layer.dataset.zoom + "px)";
-				setTimeout(function() {
-					breatheOut( layer );
-				}, speed);
-			}
-			function breatheOut( layer ) {
-				if ( sky.dataset.allowbreathe === 'false' ) { return; }
-				
-				layer.style.transform = "translateZ(0px)";
-				setTimeout(function() {
-					breatheIn( layer );
-				}, speed);
-			}
-		});
+			breatheIn( layer );
+		}
+
+		function breatheIn( layer ) {
+			if ( destroyed || !sky || sky.dataset.allowbreathe === 'false' ) { return; }
+
+			layer.style.transform = "translateZ(" + layer.dataset.zoom + "px)";
+			scheduleBreathe( breatheOut, layer, speed );
+		}
+		function breatheOut( layer ) {
+			if ( destroyed || !sky || sky.dataset.allowbreathe === 'false' ) { return; }
+
+			layer.style.transform = "translateZ(0px)";
+			scheduleBreathe( breatheIn, layer, speed );
+		}
 	};
 
 	this.breathe.stop = function () {
-		sky.dataset.allowbreathe = false;
+		stopBreathe();
 	};
 
 	this.flyForward = function flyForward( speed, depth ) {
+		if ( destroyed ) {
+			return;
+		}
+
 		speed = typeof speed === 'undefined' ? 14000 : speed * 1000;
 		depth = typeof depth === 'undefined' ? 86 : depth;
 		depth = depth > 94 ? 94 : depth;
 		depth = depth < 36 ? 36 : depth;
-		sky.dataset.allowbreathe = false;
+		stopBreathe();
 		sky.dataset.allowflight = true;
 
 		for ( var i = 0; i < layerNodes.length; i++ ) {
@@ -255,7 +301,11 @@ var Sky = function Sky(layers, density) {
 		}
 	};
 
-	this.flyForward.stop = function () {
+	function stopFlight() {
+		if ( !sky || !layerNodes ) {
+			return;
+		}
+
 		sky.dataset.allowflight = false;
 
 		for ( var i = 0; i < layerNodes.length; i++ ) {
@@ -267,9 +317,17 @@ var Sky = function Sky(layers, density) {
 			layer.style.opacity = layer.style.getPropertyValue("--sky-layer-opacity");
 			layer.style.transform = "translateZ(0px)";
 		}
+	}
+
+	this.flyForward.stop = function () {
+		stopFlight();
 	};
 
 	this.followPointer = function followPointer( smoothing ) {
+		if ( destroyed ) {
+			return;
+		}
+
 		pointerSmoothing = typeof smoothing === 'undefined' ? pointerSmoothing : smoothing;
 		pointerSmoothing = pointerSmoothing > 0.25 ? 0.25 : pointerSmoothing;
 		pointerSmoothing = pointerSmoothing < 0.003 ? 0.003 : pointerSmoothing;
@@ -282,10 +340,14 @@ var Sky = function Sky(layers, density) {
 		resetTravelTargetToCenter();
 
 		pointerMoveHandler = function ( event ) {
-			setTravelTargetFromPoint( event.clientX, event.clientY );
+			if ( !destroyed ) {
+				setTravelTargetFromPoint( event.clientX, event.clientY );
+			}
 		};
 		pointerResizeHandler = function () {
-			resetTravelTargetToCenter();
+			if ( !destroyed ) {
+				resetTravelTargetToCenter();
+			}
 		};
 
 		window.addEventListener( "pointermove", pointerMoveHandler, { passive: true } );
@@ -293,7 +355,7 @@ var Sky = function Sky(layers, density) {
 		animateTravelOrigin();
 	};
 
-	this.followPointer.stop = function () {
+	function stopPointer( resetOrigin ) {
 		pointerTracking = false;
 
 		if ( pointerMoveHandler ) {
@@ -304,39 +366,75 @@ var Sky = function Sky(layers, density) {
 			window.removeEventListener( "resize", pointerResizeHandler );
 		}
 
-		if ( pointerFrame ) {
+		if ( pointerFrame !== null ) {
 			window.cancelAnimationFrame( pointerFrame );
 		}
 
 		pointerMoveHandler = null;
 		pointerResizeHandler = null;
 		pointerFrame = null;
-		resetTravelTargetToCenter();
+
+		if ( resetOrigin && !destroyed && sky ) {
+			resetTravelTargetToCenter();
+		}
+	}
+
+	this.followPointer.stop = function () {
+		stopPointer( true );
 	};
 
 	this.zoomIn = function zoomIn( speed, zoom ) {
-		window.onload = (function() {
-			speed = typeof speed === 'undefined' ? 2500 : speed * 1000;
+		if ( destroyed ) {
+			return;
+		}
 
-			for ( var i = 0; i < layerNodes.length; i++ ) {
-				var layer = layerNodes[i];
-				zoom = typeof zoom === 'undefined' ? layer.dataset.zoom * 2 : layer.dataset.zoom * (zoom/3);
+		speed = typeof speed === 'undefined' ? 2500 : speed * 1000;
 
-				layer.style.WebkitTransition = "-webkit-transform "+speed+"ms ease-in-out";
-				layer.style.MozTransition = "-moz-transform "+speed+"ms ease-in-out";
-				layer.style.MsTransition = "-ms-transform "+speed+"ms ease-in-out";
-				layer.style.OTransition = "-o-transform "+speed+"ms ease-in-out";
-				layer.style.transition = "transform "+speed+"ms ease-in-out";
+		for ( var i = 0; i < layerNodes.length; i++ ) {
+			var layer = layerNodes[i];
+			var layerZoom = typeof zoom === 'undefined' ? layer.dataset.zoom * 2 : layer.dataset.zoom * (zoom/3);
 
-				layer.style.WebkitTransform = "translateZ(0.1px)";
-				layer.style.MozTransform = "translateZ(0.1px)";
-				layer.style.MsTransform = "translateZ(0.1px)";
-				layer.style.OTransform = "translateZ(0.1px)";
-				layer.style.transform = "translateZ(0.1px)"; // Rendering bug fix -- apparently an initial nonzero value is needed to jumpstart the rendering engine
+			layer.style.WebkitTransition = "-webkit-transform "+speed+"ms ease-in-out";
+			layer.style.MozTransition = "-moz-transform "+speed+"ms ease-in-out";
+			layer.style.MsTransition = "-ms-transform "+speed+"ms ease-in-out";
+			layer.style.OTransition = "-o-transform "+speed+"ms ease-in-out";
+			layer.style.transition = "transform "+speed+"ms ease-in-out";
 
-				layer.style.transform = "translateZ(" + zoom + "px)";
-			}
-		});
+			layer.style.WebkitTransform = "translateZ(0.1px)";
+			layer.style.MozTransform = "translateZ(0.1px)";
+			layer.style.MsTransform = "translateZ(0.1px)";
+			layer.style.OTransform = "translateZ(0.1px)";
+			layer.style.transform = "translateZ(0.1px)"; // Rendering bug fix -- apparently an initial nonzero value is needed to jumpstart the rendering engine
+
+			layer.style.transform = "translateZ(" + layerZoom + "px)";
+		}
+	};
+
+	this.destroy = function destroy() {
+		if ( destroyed ) {
+			return;
+		}
+
+		destroyed = true;
+		stopBreathe();
+		stopPointer( false );
+		stopFlight();
+
+		if ( sky ) {
+			sky.__skyController = null;
+		}
+
+		if ( sky && sky.parentNode ) {
+			sky.parentNode.removeChild( sky );
+		}
+
+		if ( style && style.parentNode ) {
+			style.parentNode.removeChild( style );
+		}
+
+		layerNodes = null;
+		sky = null;
+		style = null;
 	};
 
 	for ( var i = 0; i < layerNodes.length; i++ ) {
