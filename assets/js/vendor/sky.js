@@ -32,7 +32,7 @@ var Sky = function Sky(layers, density) {
 	var pointerTargetY = centerY;
 	var pointerSmoothing = 0.012;
 	var pointerEpsilon = 0.35;
-	var galaxyFrequency = 36;
+	var galaxyFrequency = 24;
 
 	var sky = document.createElement("DIV");
 	sky.id = "sky";
