@@ -18,8 +18,8 @@
     Boolean(navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     Boolean(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
   );
-  var skyLayers = prefersReducedMotion ? 1 : (constrainedDevice ? 2 : 4);
-  var skyDensity = prefersReducedMotion ? 2 : (constrainedDevice ? 3 : 6);
+  var skyLayers = prefersReducedMotion ? 2 : (constrainedDevice ? 3 : 4);
+  var skyDensity = prefersReducedMotion ? 3 : (constrainedDevice ? 4 : 6);
   var activeMeteors = [];
   var destroyed = false;
   var meteorTimer = null;
