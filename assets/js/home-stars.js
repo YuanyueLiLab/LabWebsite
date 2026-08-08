@@ -175,7 +175,7 @@
 
   if (!prefersReducedMotion) {
     if (!constrainedDevice) {
-      sky.followPointer(0.06);
+      sky.followPointer(0.06, 0.5);
     }
 
     sky.flyForward(120, 92);

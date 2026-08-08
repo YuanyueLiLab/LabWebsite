@@ -31,6 +31,7 @@ var Sky = function Sky(layers, density) {
 	var pointerTargetX = centerX;
 	var pointerTargetY = centerY;
 	var pointerSmoothing = 0.012;
+	var pointerInfluence = 1;
 	var pointerEpsilon = 0.35;
 	var galaxyFrequency = 24;
 
@@ -156,9 +157,13 @@ var Sky = function Sky(layers, density) {
 
 	function setTravelTargetFromPoint( clientX, clientY ) {
 		var size = getSkySize();
+		var targetX = clamp( clientX - size.rect.left, 0, size.width );
+		var targetY = clamp( clientY - size.rect.top, 0, size.height );
+		var centerX = size.width / 2;
+		var centerY = size.height / 2;
 
-		pointerTargetX = clamp( clientX - size.rect.left, 0, size.width );
-		pointerTargetY = clamp( clientY - size.rect.top, 0, size.height );
+		pointerTargetX = centerX + ((targetX - centerX) * pointerInfluence);
+		pointerTargetY = centerY + ((targetY - centerY) * pointerInfluence);
 	}
 
 	function resetTravelTargetToCenter() {
@@ -355,7 +360,7 @@ var Sky = function Sky(layers, density) {
 		stopFlight();
 	};
 
-	this.followPointer = function followPointer( smoothing ) {
+	this.followPointer = function followPointer( smoothing, influence ) {
 		if ( destroyed ) {
 			return;
 		}
@@ -363,6 +368,8 @@ var Sky = function Sky(layers, density) {
 		pointerSmoothing = typeof smoothing === 'undefined' ? pointerSmoothing : smoothing;
 		pointerSmoothing = pointerSmoothing > 0.25 ? 0.25 : pointerSmoothing;
 		pointerSmoothing = pointerSmoothing < 0.003 ? 0.003 : pointerSmoothing;
+		pointerInfluence = typeof influence === 'undefined' ? pointerInfluence : influence;
+		pointerInfluence = clamp( pointerInfluence, 0, 1 );
 
 		if ( pointerTracking ) {
 			return;
