@@ -24,6 +24,7 @@ var Sky = function Sky(layers, density) {
 	var skySize = null;
 	var pointerFrame = null;
 	var pointerMoveHandler;
+	var touchMoveHandler;
 	var pointerResizeHandler;
 	var pointerTracking = false;
 	var pointerCurrentX = centerX;
@@ -379,8 +380,14 @@ var Sky = function Sky(layers, density) {
 		resetTravelTargetToCenter();
 
 		pointerMoveHandler = function ( event ) {
-			if ( !destroyed ) {
+			if ( !destroyed && event.pointerType !== "touch" ) {
 				setTravelTargetFromPoint( event.clientX, event.clientY );
+				startPointerAnimation();
+			}
+		};
+		touchMoveHandler = function ( event ) {
+			if ( !destroyed && event.touches.length ) {
+				setTravelTargetFromPoint( event.touches[0].clientX, event.touches[0].clientY );
 				startPointerAnimation();
 			}
 		};
@@ -391,6 +398,7 @@ var Sky = function Sky(layers, density) {
 		};
 
 		window.addEventListener( "pointermove", pointerMoveHandler, { passive: true } );
+		window.addEventListener( "touchmove", touchMoveHandler, { passive: true } );
 		window.addEventListener( "resize", pointerResizeHandler );
 	};
 
@@ -399,6 +407,10 @@ var Sky = function Sky(layers, density) {
 
 		if ( pointerMoveHandler ) {
 			window.removeEventListener( "pointermove", pointerMoveHandler );
+		}
+
+		if ( touchMoveHandler ) {
+			window.removeEventListener( "touchmove", touchMoveHandler );
 		}
 
 		if ( pointerResizeHandler ) {
@@ -410,6 +422,7 @@ var Sky = function Sky(layers, density) {
 		}
 
 		pointerMoveHandler = null;
+		touchMoveHandler = null;
 		pointerResizeHandler = null;
 		pointerFrame = null;
 

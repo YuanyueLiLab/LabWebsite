@@ -12,6 +12,10 @@
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   var compactViewport = window.matchMedia("(max-width: 760px)").matches;
+  var hasTouchInput = (
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia("(any-pointer: coarse)").matches
+  );
   var constrainedDevice = (
     compactViewport ||
     Boolean(connection && connection.saveData) ||
@@ -174,8 +178,8 @@
   window.destroyHomeStars = destroyHomeStars;
 
   if (!prefersReducedMotion) {
-    if (!constrainedDevice) {
-      sky.followPointer(0.06, 0.5);
+    if (compactViewport || hasTouchInput || !constrainedDevice) {
+      sky.followPointer(0.01, 0.5);
     }
 
     sky.flyForward(120, 92);
