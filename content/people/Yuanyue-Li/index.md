@@ -11,7 +11,7 @@ last_name: Li
 superuser: true
 
 # Role/position
-role: ZJU 100 Young Professor
+role: Principal investigator
 
 # Short bio (displayed in user profile at end of posts)
 # bio: I develop methods for metabolomics.
@@ -40,12 +40,12 @@ social:
   - icon: envelope
     icon_pack: fas
     link: 'mailto:yuanyueli@zju.edu.cn'
-  - icon: twitter
-    icon_pack: fab
-    link: https://twitter.com/LiYuanyue
-    label: Follow me on Twitter
-    display:
-      header: false
+  # - icon: twitter
+  #   icon_pack: fab
+  #   link: https://twitter.com/LiYuanyue
+  #   label: Follow me on Twitter
+  #   display:
+  #     header: false
   - icon: google-scholar # Alternatively, use `google-scholar` icon from `ai` icon pack
     icon_pack: ai
     link: https://scholar.google.co.uk/citations?user=p0fQe3sAAAAJ

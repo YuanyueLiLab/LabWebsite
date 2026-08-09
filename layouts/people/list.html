@@ -24,21 +24,18 @@
 
     <div class="page-container page-body__inner">
       <div class="content-blocks">
-        {{ range $groups }}
-          {{ $group := . }}
-          {{ $groupPeople := where $people "Params.user_groups" "intersect" (slice $group) }}
-          {{ if gt (len $groupPeople) 0 }}
-            <section id="{{ anchorize $group }}" class="page-section page-card people-section">
-              <div class="page-section__heading">
-                <h2>{{ $group }}</h2>
-              </div>
-              <div class="page-section__body people-section__body">
-                <div class="people-grid">
+        <section class="people-section" aria-label="People">
+          <div class="page-section__body people-section__body">
+            <div class="people-grid">
+              {{ range $groups }}
+                {{ $group := . }}
+                {{ $groupPeople := where $people "Params.user_groups" "intersect" (slice $group) }}
+                {{ if gt (len $groupPeople) 0 }}
                   {{ range $groupPeople }}
                     {{ $person := . }}
                     <article class="people-person">
                       {{ with .Resources.GetMatch "avatar.*" }}
-                        {{ $avatar := .Fill "192x192 Center webp q82" }}
+                        {{ $avatar := .Fill "320x320 Center webp q84" }}
                         <a class="people-person__avatar" href="{{ $person.RelPermalink }}">
                           <img src="{{ $avatar.RelPermalink }}" width="{{ $avatar.Width }}" height="{{ $avatar.Height }}" loading="lazy" decoding="async" alt="{{ $person.Title }}">
                         </a>
@@ -66,11 +63,11 @@
                       </div>
                     </article>
                   {{ end }}
-                </div>
-              </div>
-            </section>
-          {{ end }}
-        {{ end }}
+                {{ end }}
+              {{ end }}
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
