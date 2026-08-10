@@ -5,9 +5,7 @@
     <header class="profile-hero">
       <div class="page-container profile-hero__inner">
         <div class="profile-hero__copy">
-          {{ with .Params.user_groups }}<p class="profile-kicker">{{ delimit . " / " }}</p>{{ end }}
-          <h1>{{ .Title }}{{ with .Params.title_chinese }} <span>{{ . }}</span>{{ end }}</h1>
-          {{ with .Params.role }}<p class="profile-role profile-hero__role">{{ . }}</p>{{ end }}
+          <h1>{{ .Title }}{{ with .Params.title_chinese }} <span style="font-size: 2rem;">{{ . }}</span>{{ end }}</h1>
           {{ with .Params.bio }}<p class="profile-hero__summary">{{ . }}</p>{{ end }}
 
           {{ if or .Params.user_groups $email }}
@@ -18,6 +16,7 @@
                   <span>{{ delimit . ", " }}</span>
                 </span>
               {{ end }}
+
               {{ with $email }}
                 <a href="mailto:{{ . }}">
                   {{ partial "fontawesome-icon.html" (dict "icon" "envelope") }}
@@ -86,7 +85,6 @@
         <div class="profile-story">
           <section class="page-section page-card profile-section profile-section--bio">
             <div class="page-section__heading">
-              <p class="page-section__label">Biography</p>
               <h2>About</h2>
             </div>
             <div class="page-section__body">

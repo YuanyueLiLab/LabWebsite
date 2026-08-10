@@ -8,7 +8,7 @@ first_name: Sirui
 last_name: Lyu
 
 # Role/position
-role: Undergraduate Students
+role: Undergraduate Student
 
 interests:
   - Artificial Intelligence
