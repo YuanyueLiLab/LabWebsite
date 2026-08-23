@@ -146,7 +146,7 @@
     };
     activeTwinkle = twinkleRecord;
     star.style.setProperty("--twinkle-duration", duration + "ms");
-    star.style.setProperty("--twinkle-ray-length", randomBetween(36, 64) + "px");
+    star.style.setProperty("--twinkle-ray-length", randomBetween(54, 88) + "px");
     star.classList.add("is-twinkling");
 
     twinkleRecord.timer = window.setTimeout(function () {
@@ -255,7 +255,7 @@
     sky.setPaused(false);
     scheduleFirstMeteor();
     scheduleMeteor();
-    scheduleTwinkle(200, 500);
+    scheduleTwinkle(40, 120);
   }
 
   function destroyHomeStars() {
@@ -289,7 +289,7 @@
 
   if (!prefersReducedMotion) {
     if (compactViewport || hasTouchInput || !constrainedDevice) {
-      sky.followPointer(0.01, 0.5);
+      sky.followPointer(0.01, 0.15);
     }
 
     sky.flyForward(120, 92);

@@ -374,6 +374,11 @@ html.page-transition-enabled.is-page-leaving main {
 .sky-stars #sky .star.is-twinkling {
   z-index: 2;
   transform-origin: center;
+  background: white !important;
+  box-shadow:
+    0 0 8px 2px rgba(255, 255, 255, 0.96),
+    0 0 20px 6px rgba(164, 215, 255, 0.66),
+    0 0 38px 10px rgba(95, 170, 255, 0.3);
   will-change: transform;
   animation: sky-star-twinkle var(--twinkle-duration, 1400ms) ease-in-out both;
 }
@@ -384,23 +389,23 @@ html.page-transition-enabled.is-page-leaving main {
   position: absolute;
   left: 50%;
   top: 50%;
-  border-radius: 999px;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(90deg, transparent, rgba(214, 235, 255, 0.94) 48%, white 50%, rgba(214, 235, 255, 0.94) 52%, transparent);
+  width: var(--twinkle-ray-length, 66px);
+  height: var(--twinkle-ray-length, 66px);
+  background:
+    radial-gradient(circle, white 0 3%, rgba(208, 235, 255, 0.92) 5%, rgba(122, 193, 255, 0.38) 14%, transparent 38%),
+    linear-gradient(90deg, transparent, rgba(203, 232, 255, 0.72) 43%, white 49%, white 51%, rgba(203, 232, 255, 0.72) 57%, transparent) center / 100% 2px no-repeat,
+    linear-gradient(180deg, transparent, rgba(203, 232, 255, 0.72) 43%, white 49%, white 51%, rgba(203, 232, 255, 0.72) 57%, transparent) center / 2px 100% no-repeat;
   will-change: opacity, transform;
   animation: sky-star-rays var(--twinkle-duration, 1400ms) ease-in-out both;
 }
 
-.sky-stars #sky .star.is-twinkling::before {
-  width: var(--twinkle-ray-length, 34px);
-  height: 1px;
-}
-
 .sky-stars #sky .star.is-twinkling::after {
-  width: 1px;
-  height: var(--twinkle-ray-length, 34px);
-  background: linear-gradient(180deg, transparent, rgba(214, 235, 255, 0.94) 48%, white 50%, rgba(214, 235, 255, 0.94) 52%, transparent);
+  background:
+    linear-gradient(90deg, transparent, rgba(170, 216, 255, 0.56) 44%, white 49%, white 51%, rgba(170, 216, 255, 0.56) 56%, transparent) center / 100% 1px no-repeat,
+    linear-gradient(180deg, transparent, rgba(170, 216, 255, 0.56) 44%, white 49%, white 51%, rgba(170, 216, 255, 0.56) 56%, transparent) center / 1px 100% no-repeat;
+  animation-name: sky-star-diagonal-rays;
 }
 
 @keyframes sky-star-twinkle {
@@ -409,31 +414,64 @@ html.page-transition-enabled.is-page-leaving main {
     transform: scale(1);
   }
 
-  38% {
-    transform: scale(1.75);
+  26% {
+    transform: scale(2.15);
   }
 
-  58% {
-    transform: scale(1.3);
+  66% {
+    transform: scale(2.05);
+  }
+
+  82% {
+    transform: scale(1.45);
   }
 }
 
 @keyframes sky-star-rays {
   0%,
-  14%,
+  6%,
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.12);
   }
 
-  38% {
+  28% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
 
-  62% {
-    opacity: 0.42;
-    transform: translate(-50%, -50%) scale(0.66);
+  68% {
+    opacity: 0.94;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+
+  86% {
+    opacity: 0.38;
+    transform: translate(-50%, -50%) scale(0.64);
+  }
+}
+
+@keyframes sky-star-diagonal-rays {
+  0%,
+  8%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.08);
+  }
+
+  30% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.62);
+  }
+
+  70% {
+    opacity: 0.66;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.6);
+  }
+
+  88% {
+    opacity: 0.26;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.42);
   }
 }
 
