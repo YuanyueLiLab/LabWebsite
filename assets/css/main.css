@@ -371,6 +371,83 @@ html.page-transition-enabled.is-page-leaving main {
   filter: drop-shadow(0 0 10px rgba(155, 200, 255, 0.22));
 }
 
+.sky-stars #sky .star.is-twinkling {
+  z-index: 2;
+  transform-origin: center;
+  will-change: transform, filter, box-shadow;
+  animation: sky-star-twinkle var(--twinkle-duration, 1400ms) ease-in-out both;
+}
+
+.sky-stars #sky .star.is-twinkling::before,
+.sky-stars #sky .star.is-twinkling::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(214, 235, 255, 0.94) 48%, white 50%, rgba(214, 235, 255, 0.94) 52%, transparent);
+  filter: drop-shadow(0 0 4px rgba(171, 216, 255, 0.82));
+  animation: sky-star-rays var(--twinkle-duration, 1400ms) ease-in-out both;
+}
+
+.sky-stars #sky .star.is-twinkling::before {
+  width: var(--twinkle-ray-length, 34px);
+  height: 1px;
+}
+
+.sky-stars #sky .star.is-twinkling::after {
+  width: 1px;
+  height: var(--twinkle-ray-length, 34px);
+  background: linear-gradient(180deg, transparent, rgba(214, 235, 255, 0.94) 48%, white 50%, rgba(214, 235, 255, 0.94) 52%, transparent);
+}
+
+@keyframes sky-star-twinkle {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 7px rgba(255, 255, 255, 0.65);
+  }
+
+  38% {
+    transform: scale(1.75);
+    filter: brightness(2.4);
+    box-shadow:
+      0 0 8px rgba(255, 255, 255, 1),
+      0 0 18px rgba(177, 220, 255, 0.92),
+      0 0 32px rgba(116, 181, 255, 0.44);
+  }
+
+  58% {
+    transform: scale(1.3);
+    filter: brightness(1.7);
+    box-shadow:
+      0 0 7px rgba(255, 255, 255, 0.9),
+      0 0 15px rgba(177, 220, 255, 0.62);
+  }
+}
+
+@keyframes sky-star-rays {
+  0%,
+  14%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.12);
+  }
+
+  38% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  62% {
+    opacity: 0.42;
+    transform: translate(-50%, -50%) scale(0.66);
+  }
+}
+
 .sky-meteor {
   position: absolute;
   left: var(--meteor-x);
@@ -3162,6 +3239,12 @@ time {
 
   .sky-meteor {
     display: none;
+    animation: none;
+  }
+
+  .sky-stars #sky .star.is-twinkling,
+  .sky-stars #sky .star.is-twinkling::before,
+  .sky-stars #sky .star.is-twinkling::after {
     animation: none;
   }
 }

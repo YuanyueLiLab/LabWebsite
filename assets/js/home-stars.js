@@ -25,9 +25,11 @@
   var skyLayers = prefersReducedMotion ? 2 : (constrainedDevice ? 3 : 4);
   var skyDensity = prefersReducedMotion ? 3 : (constrainedDevice ? 4 : 6);
   var activeMeteors = [];
+  var activeTwinkles = [];
   var destroyed = false;
   var meteorTimer = null;
   var firstMeteorTimer = null;
+  var twinkleTimer = null;
 
   var existingSky = document.getElementById("sky");
 
@@ -51,6 +53,108 @@
 
   function randomBetween(min, max) {
     return min + Math.random() * (max - min);
+  }
+
+  function findTwinkleStar() {
+    var stars = skyNode.querySelectorAll(".star");
+
+    if (!stars.length) {
+      return null;
+    }
+
+    for (var attempt = 0; attempt < 18; attempt++) {
+      var star = stars[Math.floor(Math.random() * stars.length)];
+      var rect;
+
+      if (star.firstElementChild || star.classList.contains("is-twinkling")) {
+        continue;
+      }
+
+      rect = star.getBoundingClientRect();
+
+      if (
+        rect.right >= 0 &&
+        rect.bottom >= 0 &&
+        rect.left <= window.innerWidth &&
+        rect.top <= window.innerHeight
+      ) {
+        return star;
+      }
+    }
+
+    return null;
+  }
+
+  function removeTwinkle(twinkleRecord) {
+    var recordIndex = activeTwinkles.indexOf(twinkleRecord);
+
+    if (recordIndex !== -1) {
+      activeTwinkles.splice(recordIndex, 1);
+    }
+
+    window.clearTimeout(twinkleRecord.timer);
+    twinkleRecord.node.classList.remove("is-twinkling");
+    twinkleRecord.node.style.removeProperty("--twinkle-duration");
+    twinkleRecord.node.style.removeProperty("--twinkle-ray-length");
+  }
+
+  function clearTwinkles() {
+    while (activeTwinkles.length) {
+      removeTwinkle(activeTwinkles[activeTwinkles.length - 1]);
+    }
+  }
+
+  function scheduleTwinkle(minDelay, maxDelay) {
+    window.clearTimeout(twinkleTimer);
+
+    if (destroyed || document.hidden) {
+      twinkleTimer = null;
+      return;
+    }
+
+    twinkleTimer = window.setTimeout(
+      createTwinkle,
+      randomBetween(minDelay || 100, maxDelay || 300)
+    );
+  }
+
+  function createTwinkle() {
+    var duration;
+    var star;
+    var twinkleRecord;
+
+    twinkleTimer = null;
+
+    if (destroyed || document.hidden) {
+      return;
+    }
+
+    if (activeTwinkles.length >= 3) {
+      scheduleTwinkle();
+      return;
+    }
+
+    star = findTwinkleStar();
+
+    if (!star) {
+      scheduleTwinkle(100, 300);
+      return;
+    }
+
+    duration = randomBetween(1050, 3750);
+    twinkleRecord = {
+      node: star,
+      timer: null
+    };
+    activeTwinkles.push(twinkleRecord);
+    star.style.setProperty("--twinkle-duration", duration + "ms");
+    star.style.setProperty("--twinkle-ray-length", randomBetween(36, 64) + "px");
+    star.classList.add("is-twinkling");
+
+    twinkleRecord.timer = window.setTimeout(function () {
+      removeTwinkle(twinkleRecord);
+    }, duration + 80);
+    scheduleTwinkle();
   }
 
   function createMeteor() {
@@ -141,8 +245,11 @@
       sky.setPaused(true);
       window.clearTimeout(firstMeteorTimer);
       window.clearTimeout(meteorTimer);
+      window.clearTimeout(twinkleTimer);
       firstMeteorTimer = null;
       meteorTimer = null;
+      twinkleTimer = null;
+      clearTwinkles();
       clearMeteors();
       return;
     }
@@ -150,6 +257,7 @@
     sky.setPaused(false);
     scheduleFirstMeteor();
     scheduleMeteor();
+    scheduleTwinkle(150, 500);
   }
 
   function destroyHomeStars() {
@@ -160,9 +268,12 @@
     destroyed = true;
     window.clearTimeout(firstMeteorTimer);
     window.clearTimeout(meteorTimer);
+    window.clearTimeout(twinkleTimer);
     firstMeteorTimer = null;
     meteorTimer = null;
+    twinkleTimer = null;
     document.removeEventListener("visibilitychange", handleVisibilityChange);
+    clearTwinkles();
     clearMeteors();
     sky.destroy();
 
