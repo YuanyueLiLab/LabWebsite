@@ -5,7 +5,7 @@ summary: '**MSViewer** is a tool to visualize spectra, calculate spectral simila
 date: '2025-03-14T00:00:00Z'
 
 # Optional external URL for project (replaces project detail page).
-external_link: '/msviewer'
+external_link: '/tools'
 
 # image:
 #   caption: Photo by rawpixel on Unsplash
@@ -15,7 +15,7 @@ links:
   - icon: link
     icon_pack: fas
     name: MSViewer
-    url: /msviewer
+    url: /tools
 
   - icon: github 
     icon_pack: fab
