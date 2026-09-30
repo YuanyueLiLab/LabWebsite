@@ -1,11 +1,11 @@
 {
-  "short_name": "MSViewer",
-  "name": "MS/MS spectra viewer",
+  "short_name": "Li Lab Tools",
+  "name": "Li Lab scientific tools",
   "icons": [
     {
-      "src": "app-icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "2313x2313",
       "purpose": "any"
     }
   ],

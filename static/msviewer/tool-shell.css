@@ -15,7 +15,7 @@
   --readable-width: 980px;
   --shadow: 0 12px 32px rgba(24, 45, 70, 0.08);
 
-  /* Aliases used by the standalone calculator. */
+  /* Compatibility aliases for shared tool styles. */
   --canvas: var(--page-bg);
   --surface-blue: var(--surface-soft);
   --primary: var(--accent);
@@ -152,7 +152,7 @@ a {
 }
 
 .page-shell,
-.viewer-shell {
+.ms2-spectrum-viewer-shell {
   width: min(calc(100% - 48px), var(--content-width));
   margin: 0 auto;
 }
@@ -206,7 +206,7 @@ a {
 @media (max-width: 760px) {
   .site-header__inner,
   .page-shell,
-  .viewer-shell {
+  .ms2-spectrum-viewer-shell {
     width: min(calc(100% - 32px), var(--max-width));
   }
 
@@ -224,7 +224,7 @@ a {
   }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 820px) {
   .site-header__inner {
     min-height: auto;
     align-items: flex-start;
@@ -253,7 +253,7 @@ a {
   }
 
   .site-nav a {
-    flex: 1 1 50%;
+    flex: 1 1 25%;
     min-width: 0;
     padding: 11px 8px 10px;
     line-height: 1.25;
@@ -265,7 +265,7 @@ a {
 @media (max-width: 420px) {
   .site-header__inner,
   .page-shell,
-  .viewer-shell {
+  .ms2-spectrum-viewer-shell {
     width: min(calc(100% - 20px), var(--max-width));
   }
 
@@ -276,6 +276,14 @@ a {
 
   .brand__text {
     font-size: 1rem;
+  }
+
+  .site-nav {
+    flex-wrap: wrap;
+  }
+
+  .site-nav a {
+    flex-basis: 50%;
   }
 }
 
