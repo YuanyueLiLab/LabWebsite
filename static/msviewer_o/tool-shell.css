@@ -12,7 +12,18 @@
   --radius: 8px;
   --max-width: 1420px;
   --content-width: 1380px;
+  --readable-width: 980px;
   --shadow: 0 12px 32px rgba(24, 45, 70, 0.08);
+
+  /* Compatibility aliases for shared tool styles. */
+  --canvas: var(--page-bg);
+  --surface-blue: var(--surface-soft);
+  --primary: var(--accent);
+  --primary-dark: var(--accent);
+  --navy: var(--ink);
+  --text: var(--ink);
+  --border: var(--line);
+  --error: var(--danger);
 }
 
 * {
@@ -146,11 +157,70 @@ a {
   margin: 0 auto;
 }
 
+.page-title {
+  padding: 10px 0 6px;
+  /* border-top: 1px solid var(--line); */
+  border-bottom: 1px solid var(--line);
+}
+
+.page-title__eyebrow {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.page-title h1 {
+  max-width: 920px;
+  margin: 0;
+  color: var(--blue);
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.page-title > p:last-child {
+  max-width: var(--readable-width);
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.noscript-message {
+  width: min(calc(100% - 48px), var(--content-width));
+  margin: 20px auto 0;
+  padding: 12px 16px;
+  border: 1px solid #efc7cb;
+  border-radius: var(--radius);
+  background: #fff6f7;
+  color: var(--danger);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 @media (max-width: 760px) {
   .site-header__inner,
   .page-shell,
   .ms2-spectrum-viewer-shell {
     width: min(calc(100% - 32px), var(--max-width));
+  }
+
+  .page-title {
+    padding: 30px 0 20px;
+  }
+
+  .page-title h1 {
+    font-size: clamp(1.78rem, 8vw, 2.1rem);
+    line-height: 1.18;
+  }
+
+  .page-title > p:last-child {
+    font-size: 1rem;
   }
 }
 
